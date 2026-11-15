@@ -14,16 +14,16 @@ Field Shift is a decision-support web tool for farmers: a **global engine, with 
         │  plain Python calls
         ▼
   Engine (engine/*, pure functions)
-    clients:   power_client · soil_client · ndvi_client
-    analysis:  climate · suitability · water_balance · scoring
-               planner · explain · regional · rotation_builder (exploratory)
+    clients:   power_client · soil_client · ndvi_client · cdl_client (US)
+    analysis:  climate · forecast · suitability · water_balance · scoring
+               market · planner · explain · regional · rotation_builder (exploratory)
     pipeline:  compares the current rotation with pack rotations
         │
         ▼
   Data (data/crops.json, data/raw/, data/cache/)
         ▲
         │  point queries, cached on first fetch
-  NASA POWER  ·  MODIS MOD13Q1 (ORNL DAAC)  ·  ISRIC SoilGrids*
+  NASA POWER  ·  MODIS MOD13Q1 (ORNL DAAC)  ·  ISRIC SoilGrids*  ·  USDA CDL*
                                               (* non-NASA)
 ```
 
@@ -31,14 +31,16 @@ Field Shift is a decision-support web tool for farmers: a **global engine, with 
 
 | Folder | What's in it | Owner |
 |---|---|---|
-| `engine/` | Pure-Python analysis: data clients (POWER, SoilGrids, MODIS NDVI), climate aggregates, forecast, crop suitability, rotation builder, water balance, scoring, planner, explanations. No web code. | Data / AI |
+| `engine/` | Pure-Python analysis: data clients (POWER, SoilGrids, MODIS NDVI, USDA Cropland Data Layer), climate aggregates, next-year projection, indicative gross revenue, crop suitability, rotation builder, water balance, scoring, planner, explanations. No web code. | Data / AI |
 | `backend/` | FastAPI app and the Pydantic request/response contract. | Full-stack dev |
 | `frontend/` | React app (Vite, to be created). `frontend/mock/compare.json` is sample `/api/compare` output for UI work. | Full-stack dev |
 | `data/crops.json` | Crop catalogue with requirement envelopes, generated from FAO ECOCROP by `scripts/build_crops.py`. Do not edit by hand; Kc values are still `null`. | Research |
 | `data/rotation_rules.json` | Hard and soft rotation rules with weights; each needs a reference. | Research |
-| `data/regional/` | Regional packs (local knowledge): bounding box, default water access and crop calendar. `egypt_nile_delta.json` and `india_punjab.json` carry the candidate rotations; all entries are provisional until a researcher verifies them. | Research |
+| `data/regional/` | Regional packs (local knowledge): bounding box, default water access and crop calendar. `egypt_nile_delta.json`, `india_punjab.json`, `us_iowa_corn_belt.json` and `us_kansas_plains.json` (rainfed, multi-year rotations) carry the candidate rotations; all entries are provisional until a researcher verifies them. | Research |
 | `data/demo_points.json` | Demo locations (farmland) with their water access. | Research |
 | `data/kc_fao56.json` | Crop coefficients (Kc ini/mid/end) per crop, provisional until checked against FAO-56 Table 12. | Research |
+| `data/market_egypt.json` | Egypt yields and February 2024 prices (USDA FAS reports) for indicative gross revenue; provisional. | Research |
+| `data/cdl_crop_map.json` | USDA CDL class codes (official legend, `data/raw/cdl_codes_names.xlsx`) mapped to crop ids; mapping unverified. | Research |
 | `data/sources.json` | Every external dataset, its license and access date. | Research |
 | `data/raw/` | Raw downloads (e.g. the ECOCROP CSV). See `data/raw/README.md`. | Research |
 | `data/cache/` | Cached API responses (git-ignored). | — |
@@ -61,8 +63,9 @@ The API is then at http://127.0.0.1:8000 (interactive docs at `/docs`). Endpoint
 - `GET /api/sources`
 - `GET /api/location?lat=&lon=` (real SoilGrids soil; `seasons_detected` empty until NDVI is added)
 - `GET /api/climate?lat=&lon=` (real NASA POWER, 1991–2025)
+- `GET /api/field-history?lat=&lon=` (contiguous US only: yearly USDA Cropland Data Layer crops and the detected rotation)
 - `GET /api/ndvi?lat=&lon=` (MODIS MOD13Q1 NDVI from ORNL DAAC; returns `loading` and fetches in the background if not cached — a fetch takes several minutes)
-- `POST /api/compare` (real: POWER → climate → regional pack → water → scoring → plan → explanation; see `docs/API_CHANGES.md`)
+- `POST /api/compare` (real: POWER → climate → regional pack → water → scoring → plan → explanation; see `docs/API_CHANGES.md`). `current_rotation` may be omitted for US points (detected from the CDL).
 
 Run the tests from the project root with `pytest`.
 
