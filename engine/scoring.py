@@ -10,9 +10,13 @@ Output: the same rotations with "scores" (each 0-100 or None), "score_details"
         savings, and "exceeds_water_budget"; plus a sensitivity block.
 
 Criteria:
-- water: saving versus the farmer's current rotation,
+- water (irrigated): saving versus the farmer's current rotation,
   score = clip(50 + saving_pct, 0, 100); the current rotation is 50 and a 25%
   saving is 75.
+- water (rainfed): relative water stress. Per crop season, unmet fraction =
+  water deficit / ETc; rotation value = mean over its crop seasons (fallow
+  years are not seasons); score = clip(50 + 100 x (current - rotation), 0, 100).
+  The deficit in mm is reported for information only.
 - soil_practices: "soil-health practices (proxy)", three independent parts:
   legume (40), family diversity (30), ground cover (30). Not a measured soil
   outcome.
@@ -34,6 +38,10 @@ HEAT_NOTE = (
 )
 WATER_LABEL = "irrigation water saving"
 WATER_LABEL_RAINFED = "water-deficit exposure"
+FALLOW_MOISTURE_NOTE = (
+    "Stored soil moisture from a fallow year is not modelled, so the benefit of fallow to the following "
+    "crop is not captured."
+)
 M3_PER_MM = {"feddan": 4.2, "hectare": 10.0, "acre": 4.047}
 SENSITIVITY_CASES = {
     "equal": {"water": 1, "soil": 1, "heat_risk": 1},
@@ -131,10 +139,33 @@ def _weighted_total(scores: dict, weights: dict) -> float:
 
 
 def _water_quantity(r: dict) -> float | None:
-    """Irrigation need, or water deficit for rainfed farming (mm per year)."""
+    """Irrigation need (mm per year), or for rainfed farming the mean unmet fraction of crop water demand."""
     if r.get("water_mm_per_year") is not None:
         return r["water_mm_per_year"]
-    return r.get("water_deficit_mm")
+    return r.get("water_unmet_fraction")
+
+
+def unmet_fractions(water: dict) -> tuple[list[dict], float | None]:
+    """Per crop season: unmet fraction = water deficit / ETc; and their mean (None if any crop lacks Kc).
+
+    ``water`` is a rotation_water_need_cycle result; fallow years have no crop seasons, so they add nothing.
+    """
+    per_crop = []
+    for p in water["per_crop"]:
+        if not p["water_assessed"]:
+            return [], None
+        etc, deficit = p["seasonal"]["etc_mm"], p["seasonal"]["irrigation_mm"]
+        frac = deficit / etc if etc > 0 else 0.0
+        per_crop.append({"crop": p["crop"], "year": p.get("year", 1), "etc_mm": round(etc, 1),
+                         "water_deficit_mm": round(deficit, 1), "unmet_fraction": round(frac, 3),
+                         "rain_cover_fraction": round(1 - frac, 3)})
+    if not per_crop:
+        return [], None
+    return per_crop, mean(p["unmet_fraction"] for p in per_crop)
+
+
+def has_fallow_year(r: dict) -> bool:
+    return any(w.get("fallow_year") for w in r["water"].get("per_year", []))
 
 
 def rank_key(r: dict, weights: dict) -> tuple:
@@ -183,6 +214,7 @@ def score_rotations(
     current = next(r for r in rotations if r["id"] == current_id)
     current_need = current["water"]["annual_irrigation_mm"]
     cut = 0.0 if rainfed else float(scenario.get("water_cut_pct", 0) or 0)
+    current_unmet = unmet_fractions(current["water"])[1] if rainfed else None
 
     for r in rotations:
         need = r["water"]["annual_irrigation_mm"]
@@ -253,23 +285,38 @@ def score_rotations(
 
         if rainfed:
             water = r["score_details"]["water"]
+            per_crop_unmet, unmet = unmet_fractions(r["water"])
+            if unmet is None or current_unmet is None:
+                score = None
+            else:
+                score = round(clip(50 + 100 * (current_unmet - unmet)), 1)
+            r["scores"]["water"] = score
             r["water_deficit_mm"] = r["water_mm_per_year"]
             r["water_deficit_reduction_pct"] = r["water_saving_pct"]
+            r["water_unmet_fraction"] = None if unmet is None else round(unmet, 3)
+            r["water_unmet_per_crop"] = per_crop_unmet
             water.update({
+                "unmet_fraction": r["water_unmet_fraction"],
+                "current_rotation_unmet_fraction": None if current_unmet is None else round(current_unmet, 3),
+                "unmet_per_crop": per_crop_unmet,
                 "water_deficit_mm": r["water_mm_per_year"],
                 "current_rotation_deficit_mm": water["current_rotation_mm"],
                 "deficit_reduction_mm": water["saving_mm"],
                 "deficit_reduction_pct": water["saving_pct"],
                 "annual_irrigation_mm": None, "current_rotation_mm": None, "saving_mm": None, "saving_pct": None,
-                "method": "water deficit = sum of max(ETc - effective rain, 0) per month (crop water-stress risk, "
-                          "not an irrigation need); score = clip(50 + % less deficit than your current "
-                          "rotation, 0, 100)",
+                "method": "per crop season: unmet fraction = water deficit / ETc, with water deficit = sum of "
+                          "max(ETc - effective rain, 0) per month; rotation = mean over its crop seasons (fallow "
+                          "years are not crop seasons); score = clip(50 + 100 x (current unmet fraction - this "
+                          "rotation's), 0, 100). The deficit in mm is information only, not scored.",
             })
+            if has_fallow_year(r):
+                water["fallow_note"] = FALLOW_MOISTURE_NOTE
             r["water_mm_per_year"] = r["water_saving_mm"] = r["water_saving_pct"] = None
             r["water_m3_per_year"] = r["water_saving_m3"] = None
         else:
             r["water_deficit_mm"] = None
             r["water_deficit_reduction_pct"] = None
+            r["water_unmet_fraction"] = None
         r["water_criterion_label"] = WATER_LABEL_RAINFED if rainfed else WATER_LABEL
 
     weights = normalise_priorities(priorities)

@@ -133,3 +133,7 @@ git branch -D overnight-us
 ```
 
 `pyproj` was installed into `.venv` for Phase 4. After discarding, you can remove it with `pip uninstall pyproj` (harmless if left).
+
+## Follow-up (2026-11-15): rainfed relative-stress scoring
+
+Branch `rainfed-relative-stress`. Rainfed water is now scored on the share of crop water demand that rain leaves unmet (mean over crop seasons), fallow years carry a stored-moisture caveat, and Kansas winter wheat uses stage fractions 0.48 / 0.22 / 0.22 / 0.08 (provisional). Items 1 (wheat Kc timing) and 2 (fallow arithmetic) above are addressed in the scores; item 3 is only partly addressed: double-crop soybean now has the lowest water score at Hays but still ranks first overall on soil practices. Details in `API_CHANGES.md`.

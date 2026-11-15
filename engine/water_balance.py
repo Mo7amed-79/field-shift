@@ -56,6 +56,22 @@ def load_kc(path: Path = KC_PATH) -> dict:
     }
 
 
+def apply_pack_overrides(kc_table: dict, pack: dict | None) -> dict:
+    """Kc table with per-crop stage fractions from the regional pack's crop calendar, if any.
+
+    A crop_calendar entry may carry "stage_fractions" ({initial, development, mid, late}) with its own
+    "stage_fractions_status"; it replaces the default stage lengths for that crop in that pack only.
+    """
+    out = dict(kc_table)
+    for entry in (pack or {}).get("crop_calendar", []):
+        f, crop = entry.get("stage_fractions"), entry["crop"]
+        if not f or crop not in out:
+            continue
+        out[crop] = {**out[crop], "stage_fractions": {k: f[k] for k in STAGES},
+                     "stage_fractions_status": f.get("status"), "stage_fractions_source": f"pack {pack['id']}"}
+    return out
+
+
 def kc_at(t: float, kc: dict) -> float:
     """FAO-56 Kc curve at fraction ``t`` (0..1) of the growing window."""
     f = kc["stage_fractions"]

@@ -164,3 +164,20 @@ No `NASS_API_KEY` (no `.env` file), so there are no US market tables and no `rev
 | `climate` | `forecast_year`, `forecast_backtest`, `forecast_trend_per_decade` | New. `forecast_backtest` = `{available, train_years, test_years, n_test_months, temp_c: {mae_model, mae_climatology, skill_vs_climatology, beats_climatology}, et0_mm: {…}}`. |
 | request `scenario` | `use_forecast` (bool, default `false`) | When `true`, water and heat use the projected year (rain stays climatological). `temp_delta_c` is then ignored, with a warning. |
 | `score_details.heat_risk` | `projection_year` | Set when `use_forecast` is on. |
+
+# Rainfed relative-stress scoring (branch `rainfed-relative-stress`, 2026-11-15)
+
+Additions only; irrigated responses are unchanged (Tanta regression check passes).
+
+**Behaviour change (rainfed only):** `scores.water` is now based on relative water stress, not millimetres of deficit. Per crop season, unmet fraction = `water_deficit_mm / etc_mm`; a rotation's value is the mean over its crop seasons (fallow years are not crop seasons and add nothing); score = clip(50 + 100 × (current unmet − rotation unmet), 0, 100), so the current rotation is 50. `water_deficit_mm` and `water_deficit_reduction_pct` are still returned, as information only.
+
+| Where | Field | Meaning |
+|---|---|---|
+| `rotations[]`, `all_ranked[]` | `water_unmet_fraction` | Rainfed only: mean unmet fraction over crop seasons (0–1). This is what the water score uses. |
+| `rotations[]` | `water_unmet_per_crop[]` | Rainfed only: `{crop, year, etc_mm, water_deficit_mm, unmet_fraction, rain_cover_fraction}` per crop season. |
+| `score_details.water` | `unmet_fraction`, `current_rotation_unmet_fraction`, `unmet_per_crop` | Rainfed only. `method` text updated. |
+| `score_details.water` | `fallow_note` | Rainfed rotations with a fallow year: "Stored soil moisture from a fallow year is not modelled, …". The same sentence is in `caveats` (any rotation with a fallow year) and in `assumptions`. |
+| `score_details.water.per_crop[]` | `unmet_fraction` | Rainfed only. |
+| `why` | — | Rainfed water sentence now reads "rain covers about 46% of wheat's … water demand"; the deficit in mm follows, marked as information. |
+
+**Data:** `data/regional/us_kansas_plains.json`, wheat `crop_calendar` entry gains `stage_fractions` 0.48 / 0.22 / 0.22 / 0.08 (status "provisional — from memory of FAO-56 Table 11 winter wheat, October planting; verify"). `water_balance.apply_pack_overrides` applies a pack's per-crop `stage_fractions` for that pack only.

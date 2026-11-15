@@ -155,6 +155,16 @@ class YearPlanMonth(BaseModel):
     water_deficit_mm: float | None = None  # rainfed only: ETc - effective rain (irrigation fields are None)
 
 
+class UnmetCrop(BaseModel):
+    """Rainfed: share of one crop season's water demand (ETc) not met by effective rain."""
+    crop: str
+    year: int = 1
+    etc_mm: float
+    water_deficit_mm: float  # information only
+    unmet_fraction: float  # water_deficit_mm / etc_mm
+    rain_cover_fraction: float  # 1 - unmet_fraction
+
+
 class RevenueCrop(BaseModel):
     crop: str
     label: str
@@ -215,6 +225,8 @@ class RotationResult(BaseModel):
     water_deficit_mm: float | None = None  # rainfed: ETc - effective rain per year (crop water-stress risk)
     water_deficit_reduction_pct: float | None = None  # rainfed: % less deficit than the current rotation
     water_criterion_label: str | None = None  # "irrigation water saving" or "water-deficit exposure"
+    water_unmet_fraction: float | None = None  # rainfed: mean over crop seasons of deficit / ETc (scored)
+    water_unmet_per_crop: list[UnmetCrop] = []  # rainfed: per crop season
     why: str
     not_assessed: str
     confidence: Literal["low", "medium", "high"]
@@ -244,6 +256,7 @@ class RankedOption(BaseModel):
     water_saving_pct: float | None
     water_deficit_mm: float | None = None
     water_deficit_reduction_pct: float | None = None
+    water_unmet_fraction: float | None = None  # rainfed: mean deficit / ETc over crop seasons
     n_years: int = 1
     scores: Scores
     total: float
