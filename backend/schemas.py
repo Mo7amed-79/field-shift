@@ -355,3 +355,34 @@ class CompareResponse(BaseModel):
     run_info: RunInfo
     current_rotation_source: Literal["farmer", "cdl_detected"] = "farmer"
     field_history: FieldHistory | None = None  # only when the rotation was detected from the CDL
+
+
+# --- Farmer Q&A (POST /api/chat) -------------------------------------------------------------
+
+class ChatTurn(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(..., max_length=4000)
+
+
+class ChatRequest(BaseModel):
+    question: str = Field(..., min_length=1, max_length=2000)
+    compare_request: CompareRequest  # same body as /api/compare
+    language: Literal["ar", "en"] = "ar"
+    history: list[ChatTurn] | None = None  # only the last 6 turns are used
+
+
+class ChatResponse(BaseModel):
+    answer: str | None
+    available: bool = True  # false: no key configured, provider error or timeout (answer is None)
+    message: str | None = None  # why the answer is unavailable
+    sources_used: list[str] = []  # context sections the model says it drew on
+    grounded: bool = False  # true only if every number in the answer appears in the context
+    numbers_not_in_context: list[str] = []  # numbers in the answer not found in the context
+    disclosure: str
+    model: str | None = None  # "<provider>:<model>"
+    elapsed_s: float | None = None  # model call time
+    context_tokens: int | None = None  # approximate size of the context sent
+    language_clean: bool | None = None  # Arabic answers: false if Latin-script words remain after one retry
+    latin_words: list[str] = []  # the Latin-script words left in an Arabic answer
+    timeout_retries: int = 0  # automatic retries after a provider timeout (at most 1)
+    language_retries: int = 0  # retries asking for an answer without Latin letters (at most 1)

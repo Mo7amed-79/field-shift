@@ -9,12 +9,14 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
+from backend import chat as chat_llm
 from backend.schemas import (
-    ClimateInfo, CompareRequest, CompareResponse, FieldHistory, LocationInfo, NdviResponse, SoilInfo,
+    ChatRequest, ChatResponse, ClimateInfo, CompareRequest, CompareResponse, FieldHistory, LocationInfo,
+    NdviResponse, SoilInfo,
 )
 from engine import climate as climate_engine
 from engine import forecast as forecast_engine
-from engine import cdl_client, ndvi_client, pipeline, power_client, regional, soil_client, water_balance
+from engine import cdl_client, chat_context, ndvi_client, pipeline, power_client, regional, soil_client, water_balance
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
@@ -290,3 +292,22 @@ def compare(req: CompareRequest) -> CompareResponse:
                     "calendars are provisional.",
         },
     )
+
+
+@app.post("/api/chat", response_model=ChatResponse)
+def chat(req: ChatRequest) -> ChatResponse:
+    """Answer a farmer's question using only this field's /api/compare result (grounded Q&A).
+
+    Runs the normal comparison (NDVI from the cache only), builds a deterministic context from it
+    and asks the configured LLM. No key, a provider error or a timeout gives available=false (200).
+    """
+    result = compare(req.compare_request)  # a 400 for a bad compare request passes through
+    pack = regional.find_pack(req.compare_request.lat, req.compare_request.lon)
+    ctx = chat_context.build_context(
+        result.model_dump(mode="json"), _load_json(DATA_DIR / "crops.json"),
+        _load_json(water_balance.KC_PATH), pack, _load_json(DATA_DIR / "sources.json"),
+        language=req.language, question=req.question,
+    )
+    history = [h.model_dump() for h in req.history] if req.history else None
+    out = chat_llm.ask(req.question, ctx, req.language, history)
+    return ChatResponse(**out, context_tokens=ctx["approx_tokens"])
