@@ -92,3 +92,27 @@ For the frontend developer. Lists every change to the API contract (`backend/sch
 | `kc` | New: month-average crop coefficient (FAO-56 four-stage curve); in a shared transition month the mix of both crops; `null` when fallow. |
 | `activity` | Unchanged values. In a shared transition month (harvest of one crop, sowing of the next) `crop` is the incoming crop, `activity` is `"plant"`, and `note` explains. |
 | Order | Always 12 entries, January to December. |
+
+# Overnight additions (branch `overnight-us`)
+
+All additions are optional or new fields; no existing field was renamed or removed.
+
+## Phase 1 — indicative gross revenue
+
+| Where | Field | Meaning |
+|---|---|---|
+| `rotations[]`, `all_ranked[]` | `revenue` | New `Revenue` block (always present from the engine; `null`-able in the schema). |
+| `revenue` | `available` | `false` when the region has no market table (e.g. Punjab, exploratory mode). |
+| `revenue` | `complete` | `true` only if every crop has both a yield and a price. |
+| `revenue` | `scored` | `false` everywhere except packs whose market table is complete (see Phase 5). |
+| `revenue` | `currency`, `price_snapshot`, `status` | From the market table (Egypt: EGP, February 2024 procurement prices, provisional). |
+| `revenue` | `per_crop[]` | `{crop, label, year, yield_t_per_ha, price_per_t, revenue_per_ha, revenue_per_feddan, revenue_for_area, yield_basis, price_basis, note, missing}`. |
+| `revenue` | `missing[]` | `{crop, label, missing: ["yield" \| "price"]}`. |
+| `revenue` | `total_per_ha`, `total_per_feddan`, `total_for_area` | Whole rotation cycle; `null` unless `complete`. `total_for_area` only with `area`. |
+| `revenue` | `annual_per_ha`, `annual_per_feddan`, `annual_for_area`, `n_years` | Cycle total / number of years (same as total for one-year rotations). |
+| `revenue` | `revenue_change_pct` | Annual revenue versus the current rotation, %; `null` unless both are complete. |
+| `revenue` | `notes[]` | "gross revenue, no costs", and the rice upper-bound note when rice is present. |
+
+Label it **"indicative gross revenue"** in the UI. Never call it profit or income. Revenue is not part of `scores` or `total` for Egypt.
+`why` gains one sentence on revenue: the trade-off with numbers when both rotations are complete, otherwise which crop has no price.
+`not_assessed` now starts with "production costs and current market prices" (regions with a market table) or "crop prices and revenue" (others); it no longer says "income".

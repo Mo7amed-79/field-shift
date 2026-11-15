@@ -12,7 +12,7 @@ does not invent rotations. Without a pack it falls back to the global
 rotation builder in "exploratory mode" (low confidence).
 """
 
-from engine import climate, explain, planner, rotation_builder, scoring, suitability, water_balance
+from engine import climate, explain, market, planner, rotation_builder, scoring, suitability, water_balance
 
 N_ALTERNATIVES = 2
 SOURCE_PACK_ROTATION = "regional pack rotation (provisional)"
@@ -175,6 +175,10 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
     scoring.score_rotations(candidates, request["priorities"], scenario, "current", area)
 
     current = candidates[0]
+    market_table = None if exploratory else market.load_market(pack)
+    for rot in candidates:
+        rot["revenue"] = market.rotation_revenue(rot, market_table, area)
+    market.add_change_vs_current(candidates, current)
     weights = scoring.normalise_priorities(request["priorities"])
     all_ranked, current_is_strong, current_overall_rank = [], False, None
     if exploratory:
@@ -185,7 +189,7 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
             {
                 "id": r["pack_rotation_id"] or r["id"], "name": r["name"], "is_current": r["is_current"],
                 "water_mm_per_year": r["water_mm_per_year"], "water_saving_pct": r["water_saving_pct"],
-                "scores": r["scores"], "total": r["total"], "rank": i,
+                "scores": r["scores"], "total": r["total"], "rank": i, "revenue": r["revenue"],
             }
             for i, r in enumerate(ordered, 1)
         ]
@@ -203,7 +207,8 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
 
     for i, rid in enumerate(scoring._rank(shown, weights), 1):
         next(r for r in shown if r["id"] == rid)["rank"] = i
-    explain.explain_ranking(shown, "current", current_is_strong, current_overall_rank, len(all_ranked) or None)
+    explain.explain_ranking(shown, "current", current_is_strong, current_overall_rank, len(all_ranked) or None,
+                            market.basis_text(market_table) if market_table else None)
 
     for r in shown:
         r["confidence"] = _confidence(r, kc_table, exploratory)
@@ -226,6 +231,11 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
         "ground cover (30); it counts practices and is not a measured soil outcome.",
         "Kc values and regional calendars are provisional until verified against FAO-56 Table 12 and local sources.",
     ]
+    if market_table:
+        assumptions.append(
+            "Indicative gross revenue = national average yield x " + market.basis_text(market_table).split(",")[0]
+            + "; it is shown for information only and is not part of the scores."
+        )
     if request.get("soil_texture"):
         assumptions.append("The soil texture you entered is recorded but not yet used in the scores.")
 

@@ -65,6 +65,34 @@
       "license": "TODO verify",
       "accessed": "2026-11-14",
       "non_nasa": true
+    },
+    {
+      "name": "USDA FAS GAIN report EG2024-0011, Sugar Annual (Cairo, Egypt)",
+      "url": "https://apps.fas.usda.gov/newgainapi/api/Report/DownloadReportByFileName?fileName=Sugar+Annual_Cairo_Egypt_EG2024-0011.pdf",
+      "what_we_use": "Table 'Government Procurement Prices Announced in February 2024': procurement / guaranteed prices (EGP/t) for wheat, maize, rice, soybean, sunflower, cotton and sugar beet in data/market_egypt.json; implied sunflower and cotton yields.",
+      "license": "TODO verify",
+      "accessed": "2026-11-14",
+      "non_nasa": true,
+      "status": "provisional — secondary source, not FAOSTAT"
+    },
+    {
+      "name": "USDA FAS GAIN report EG2024-0023, Grain and Feed Update (Cairo, Egypt, 25 Sep 2024)",
+      "url": "https://apps.fas.usda.gov/newgainapi/api/Report/DownloadReportByFileName?fileName=Grain+and+Feed+Update_Cairo_Egypt_EG2024-0023",
+      "what_we_use": "Post estimates MY2024/25 for wheat, maize and rice area and production (national average yields in data/market_egypt.json).",
+      "license": "TODO verify",
+      "accessed": "2026-11-14",
+      "non_nasa": true,
+      "status": "provisional — secondary source, not FAOSTAT"
+    },
+    {
+      "name": "USDA FAS GAIN report EG2024-0008, Oilseeds and Products Annual (Cairo, Egypt, 4 Apr 2024)",
+      "url": "https://www.oilworld.ru/data/postfiles/347868/Oilseeds_and_Products_Egypt_2024-0008.pdf",
+      "url_note": "Third-party mirror recorded in data/market_egypt.json; the official GAIN download URL is TODO.",
+      "what_we_use": "Soybean national average yield in data/market_egypt.json.",
+      "license": "TODO verify",
+      "accessed": "2026-11-14",
+      "non_nasa": true,
+      "status": "provisional — secondary source, not FAOSTAT"
     }
   ]
 }

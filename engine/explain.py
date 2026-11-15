@@ -5,8 +5,9 @@ Input:  scored rotations (scoring.score_rotations), the id of the farmer's
         current rotation, and optionally how the current rotation ranks among
         all local options.
 Output: the same rotations with "why" (2-3 sentences naming the actual numbers
-        and the main trade-off) and a "not assessed" sentence. No yield or
-        income claims.
+        and the main trade-off), an indicative gross revenue trade-off sentence
+        when a market table exists, and a "not assessed" sentence. No claims
+        about net returns; the words used are "indicative gross revenue".
 """
 
 ORDINALS = {1: "1st", 2: "2nd", 3: "3rd"}
@@ -83,8 +84,58 @@ def _gains(best: dict, current: dict) -> str:
     return f"the best alternative ({best['name']}) would gain " + " and ".join(gains)
 
 
+def _pct_phrase(pct: float, up: str, down: str) -> str:
+    return f"about {abs(pct):.0f}% {up if pct > 0 else down}"
+
+
+def _missing_names(rev: dict, kind: str) -> list[str]:
+    return [m["label"] for m in rev["missing"] if kind in m["missing"]]
+
+
+def revenue_sentence(r: dict, current: dict, basis: str | None) -> str | None:
+    """One trade-off sentence on indicative gross revenue versus the current rotation, or None."""
+    rev, base = r.get("revenue"), current.get("revenue")
+    if not rev or not rev.get("available"):
+        return None
+    if r is current:
+        if rev["complete"]:
+            return None
+        gaps = rev
+    elif rev["complete"] and base["complete"]:
+        change = rev["revenue_change_pct"]
+        pct = r.get("water_saving_pct")
+        if pct is None or abs(pct) < 1:
+            water = "needs about the same irrigation water"
+        else:
+            water = (f"saves {abs(pct):.0f}% irrigation water" if pct > 0
+                     else f"needs {abs(pct):.0f}% more irrigation water")
+        if abs(change) < 1:
+            money = "indicative gross revenue is about the same"
+        else:
+            money = f"indicative gross revenue is {_pct_phrase(change, 'higher', 'lower')}"
+        conflict = (pct or 0) > 0 and change < 0 or (pct or 0) < 0 and change > 0
+        rice = any(p["crop"] == "rice" for x in (r, current) for p in x["revenue"]["per_crop"])
+        text = f"It {water} {'but' if conflict else 'and'} {money} — {basis}"
+        if rice:
+            text += "; rice revenue is an upper bound (milled-rice price)"
+        return text + "."
+    else:
+        gaps = rev if not rev["complete"] else base
+    names_price = _missing_names(gaps, "price")
+    names_yield = [n for n in _missing_names(gaps, "yield") if n not in names_price]
+    whose = "this rotation" if gaps is rev else "your current rotation"
+    parts = []
+    if names_price:
+        parts.append("no price for " + " and ".join(names_price))
+    if names_yield:
+        parts.append("no yield for " + " and ".join(names_yield))
+    return f"Indicative gross revenue cannot be compared: {whose} has " + "; ".join(parts) + " in the market table."
+
+
 def not_assessed(r: dict) -> str:
-    items = ["crop prices and income", "pests and diseases", "a field-level soil test"]
+    rev = r.get("revenue") or {}
+    first = "production costs and current market prices" if rev.get("available") else "crop prices and revenue"
+    items = [first, "pests and diseases", "a field-level soil test"]
     rice = [p for p in r["water"]["per_crop"] if p["crop"] == "rice"]
     if rice and not any(p.get("paddy_extra_water_mm") is not None for p in rice):
         items.append("water for rice land preparation and percolation")
@@ -94,6 +145,7 @@ def not_assessed(r: dict) -> str:
 def explain_ranking(
     scored: list[dict], current_id: str, current_is_strong: bool = False,
     current_overall_rank: int | None = None, n_options: int | None = None,
+    revenue_basis: str | None = None,
 ) -> list[dict]:
     """Attach "why" and "not_assessed" text to each scored rotation."""
     current = next(r for r in scored if r["id"] == current_id)
@@ -117,6 +169,9 @@ def explain_ranking(
             t = _trade_off(r, current)
             if t:
                 sentences.append(t)
+        rs = revenue_sentence(r, current, revenue_basis)
+        if rs:
+            sentences.append(rs)
         r["why"] = " ".join(sentences)
         r["not_assessed"] = not_assessed(r)
     return scored

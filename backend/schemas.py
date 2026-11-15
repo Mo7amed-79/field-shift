@@ -144,6 +144,44 @@ class YearPlanMonth(BaseModel):
     note: str | None = None
 
 
+class RevenueCrop(BaseModel):
+    crop: str
+    label: str
+    year: int = 1
+    yield_t_per_ha: float | None
+    price_per_t: float | None
+    revenue_per_ha: float | None
+    revenue_per_feddan: float | None
+    revenue_for_area: float | None = None
+    yield_basis: str | None = None
+    price_basis: str | None = None
+    note: str | None = None
+    missing: list[str]
+
+
+class Revenue(BaseModel):
+    """Indicative gross revenue (yield x price, no costs). Not a score unless scored is true."""
+
+    available: bool  # False when the region has no market table
+    complete: bool  # True only if every crop has a yield and a price
+    scored: bool  # True only where revenue is a priority (pack market table complete)
+    currency: str | None
+    price_snapshot: str | None
+    status: str | None = None
+    per_crop: list[RevenueCrop]
+    missing: list[dict]  # [{crop, label, missing: ["yield" | "price"]}]
+    n_years: int | None = None
+    total_per_ha: float | None  # whole rotation cycle
+    total_per_feddan: float | None
+    total_for_area: float | None = None
+    annual_per_ha: float | None = None  # cycle total / n_years
+    annual_per_feddan: float | None = None
+    annual_for_area: float | None = None
+    area: Area | None = None
+    revenue_change_pct: float | None = None  # annual, versus the current rotation; both must be complete
+    notes: list[str]
+
+
 class RotationResult(BaseModel):
     id: str
     name: str
@@ -168,6 +206,7 @@ class RotationResult(BaseModel):
     caveats: list[str]
     suitability: list[CropSuitability]
     year_plan: list[YearPlanMonth]
+    revenue: Revenue | None = None
 
 
 class SensitivityCase(BaseModel):
@@ -191,6 +230,7 @@ class RankedOption(BaseModel):
     scores: Scores
     total: float
     rank: int
+    revenue: Revenue | None = None
 
 
 class NdviCropCheck(BaseModel):
