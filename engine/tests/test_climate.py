@@ -159,7 +159,9 @@ def test_api_climate_uses_engine_offline(offline_cache, monkeypatch):
     assert body["source"] == "NASA POWER"
     assert body["is_cached"] is True
     assert len(body["monthly"]) == 12
-    assert body["forecast_next_year"] is None
+    # Overnight Phase 6: the forecast is now filled (was None while engine/forecast.py was a stub).
+    assert len(body["forecast_next_year"]) == 12 and body["forecast_year"] == 2026
+    assert body["forecast_method"].startswith("Simple statistical projection")
 
 
 def _synthetic_long_record(raw_tanta: dict, warming_per_year: float) -> dict:

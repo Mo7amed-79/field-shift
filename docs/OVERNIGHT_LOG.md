@@ -48,3 +48,24 @@ Times are local (UTC+2).
 - **Demo point changed:** the Phase 3 Kansas point (38.85, −99.25) is alfalfa then grass/pasture in the CDL, so it is not a wheat field. Searching a grid around Hays found **38.75, −99.15**, with Sorghum, Fallow, Winter Wheat, Sorghum, Fallow, Winter Wheat for 2020–2025: a textbook wheat → sorghum → fallow field. `demo_points.json`, the test fixtures and the US tests now use it. The two Phase 3 fixtures for the old point were removed; same POWER grid cell, so the climate numbers are identical. Iowa (42.00, −93.75): Soybeans/Corn alternating 2020–2025 → maize → soybean, high confidence.
 - Timing: the first Iowa fetch took 43 s (7 requests; the service is sometimes slow); Kansas 11 s. One request timed out once during the exploration grid. Results are cached in `data/cache/cdl_*.json` (git-ignored); fixtures are in `engine/tests/fixtures/`.
 - **Caveat:** CDL assigns winter wheat to its harvest year, so "fallow" years in a wheat → sorghum → fallow sequence match our frame model (wheat yr 1, sorghum yr 2, fallow yr 3), but sowing happens in the previous calendar year. Only one 30 m pixel is read; edge pixels can be misclassified.
+
+## 04:05 — Phase 5: skipped
+- There is no `.env` file in the project, so `NASS_API_KEY` is not set. As instructed, Phase 5 (USDA NASS QuickStats yields/prices for Iowa and Kansas, US market tables, the `revenue` priority) was **not attempted**. `.env` is git-ignored (`.gitignore` line `.env`), so the key can be added safely later.
+- Consequence: US rotations have `revenue.available = false`, and revenue is not a priority anywhere. `market.revenue_is_scoreable()` exists, but nothing uses it yet.
+
+## 04:10 — Phase 6: next-year climate projection
+- `engine/forecast.py`: per variable, OLS on 12 month-of-year means plus one linear trend over the monthly 1991–2025 record; projects 2026. Rain is not projected.
+- Back-test (fit 1991–2020, test 2021–2025, 60 months), MAE trend model vs climatology baseline:
+
+  | Point | Temp model | Temp climatology | ET0 model (mm/mo) | ET0 climatology |
+  |---|---|---|---|---|
+  | Tanta | 0.86 °C | 1.13 °C | 6.42 | 7.05 |
+  | Ludhiana (Punjab) | 1.27 | 1.48 | 13.59 | 19.72 |
+  | Ames (Iowa) | 1.62 | 1.86 | 10.92 | 12.27 |
+  | Hays (Kansas) | 1.45 | 1.61 | 11.84 | 12.98 |
+
+  The trend model beats climatology at all four points, but only by 9–31%. Most of the gain comes from the warming offset of the recent years, not from any skill at predicting a particular year.
+- `use_forecast` scenario: Tanta water needs rise about 2.3% for every rotation, the ranking is unchanged, and the rice rotations lose up to 0.2 total points on heat.
+- Decision: when `use_forecast` and `temp_delta_c` are both set, the delta is ignored with a warning; stacking them would need ET0 recomputed from projected Tmax/Tmin/RH, which the model does not project.
+- Test expectation changed: `test_climate.py::test_api_climate_uses_engine_offline` asserted `forecast_next_year is None` (stub era); it now asserts 12 months and the method text.
+- **Looks odd:** Punjab shows a *negative* temperature trend (−0.35 °C/decade) and ET0 trend (−7.7 mm/month per decade) in POWER. That is plausibly irrigation cooling or aerosol dimming, but it is worth checking against station data before showing it to farmers.

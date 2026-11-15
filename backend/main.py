@@ -13,6 +13,7 @@ from backend.schemas import (
     ClimateInfo, CompareRequest, CompareResponse, FieldHistory, LocationInfo, NdviResponse, SoilInfo,
 )
 from engine import climate as climate_engine
+from engine import forecast as forecast_engine
 from engine import cdl_client, ndvi_client, pipeline, power_client, regional, soil_client, water_balance
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -97,9 +98,19 @@ def _fetch_soil(lat: float, lon: float) -> tuple[dict | None, SoilInfo | None, s
     return s, info, None
 
 
-def _climate_info(raw: dict, summary: dict) -> ClimateInfo:
+def _climate_info(raw: dict, summary: dict, projection: dict | None = None) -> ClimateInfo:
     meta = raw["meta"]
+    if projection is None:
+        try:
+            projection = forecast_engine.project_next_year(raw)
+        except ValueError:
+            projection = None
     return ClimateInfo(
+        forecast_next_year=projection["months"] if projection else None,
+        forecast_method=projection["method"] if projection else None,
+        forecast_year=projection["year"] if projection else None,
+        forecast_backtest=projection["backtest"] if projection else None,
+        forecast_trend_per_decade=projection["trend_per_decade"] if projection else None,
         source=meta["source"],
         period=summary["period"],
         fetched_at=meta["fetched_at"],
@@ -256,7 +267,7 @@ def compare(req: CompareRequest) -> CompareResponse:
             soil=soil_info, soil_message=soil_message, seasons_detected=_ndvi_seasons(ndvi_summary),
             ndvi_status="loaded" if ndvi_summary else "not_loaded",
         ),
-        climate=_climate_info(raw, result["climate_now"]),
+        climate=_climate_info(raw, result["climate_now"], result["projection"]),
         ndvi=ndvi_data["series"] if ndvi_data else [],
         ndvi_status="loaded" if ndvi_summary else "not_loaded",
         ndvi_check=ndvi_check,

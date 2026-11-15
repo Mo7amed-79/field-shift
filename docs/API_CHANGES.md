@@ -151,3 +151,16 @@ New endpoint **`GET /api/field-history?lat=&lon=`** → `FieldHistory`:
 - `current_rotation` is now **optional** (was required). If it is omitted for a contiguous-US point and a rotation is detected, the CDL rotation is used; otherwise the response is HTTP 400 with the reason.
 - New response fields: `current_rotation_source` (`"farmer"` or `"cdl_detected"`) and `field_history` (the `FieldHistory` above, only when detected). A warning that starts "Your current rotation was detected from the USDA Cropland Data Layer…" is put first in `warnings`.
 - Internal request key `current_cycle` (list of lists) is filled by the backend from the CDL; the frontend does not need to send it.
+
+## Phase 5 — skipped
+No `NASS_API_KEY` (no `.env` file), so there are no US market tables and no `revenue` priority. `Priorities` is unchanged; `revenue.scored` is always `false`.
+
+## Phase 6 — next-year climate projection
+
+| Where | Field | Meaning |
+|---|---|---|
+| `climate` (`/api/climate`, `/api/compare`) | `forecast_next_year` | Now filled: 12 × `{month, temp_c, et0_mm}` for `forecast_year`. |
+| `climate` | `forecast_method` | Plain text: "Simple statistical projection, not a weather forecast…" plus the back-test verdict (says "does NOT beat" when it loses to climatology). |
+| `climate` | `forecast_year`, `forecast_backtest`, `forecast_trend_per_decade` | New. `forecast_backtest` = `{available, train_years, test_years, n_test_months, temp_c: {mae_model, mae_climatology, skill_vs_climatology, beats_climatology}, et0_mm: {…}}`. |
+| request `scenario` | `use_forecast` (bool, default `false`) | When `true`, water and heat use the projected year (rain stays climatological). `temp_delta_c` is then ignored, with a warning. |
+| `score_details.heat_risk` | `projection_year` | Set when `use_forecast` is on. |

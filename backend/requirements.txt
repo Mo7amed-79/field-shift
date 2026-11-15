@@ -7,4 +7,4 @@ numpy
 pytest
 httpx
 scipy
-pyproj==3.8.0
+pyproj

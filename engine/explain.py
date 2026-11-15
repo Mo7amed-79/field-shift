@@ -74,10 +74,15 @@ def _soil_reason(r: dict) -> str:
 def _heat_sentence(r: dict) -> str | None:
     h = r["score_details"]["heat_risk"]
     delta = h["temp_delta_c"]
-    if not delta and h["score_current_climate"] >= 100:
+    year = h.get("projection_year")
+    if not delta and not year and h["score_current_climate"] >= 100:
+        return None
+    if year and h["score_current_climate"] >= 100 and h["score_scenario"] >= 100:
         return None
     text = f"Heat-stress exposure (proxy) scores {h['score_current_climate']:.0f}/100 today"
-    if delta:
+    if year:
+        text += f" and {h['score_scenario']:.0f}/100 in the projected {year}"
+    elif delta:
         text += f" and {h['score_scenario']:.0f}/100 at {delta:+g} °C"
     return text + "."
 

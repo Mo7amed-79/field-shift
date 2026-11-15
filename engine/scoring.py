@@ -244,6 +244,7 @@ def score_rotations(
                 "score_scenario": round(heat_scen, 1),
                 "change": round(heat_scen - heat_now, 1),
                 "temp_delta_c": scenario.get("temp_delta_c", 0),
+                "projection_year": scenario.get("projection_year"),  # set when the scenario uses the forecast
                 "method": f"per crop: clip(100 - {HEAT_PENALTY_PER_C:g} x mean excess °C, 0, 100); "
                           "rotation: mean over crops weighted by window length",
                 "note": HEAT_NOTE,

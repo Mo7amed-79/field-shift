@@ -17,6 +17,9 @@ class Priorities(BaseModel):
 class Scenario(BaseModel):
     temp_delta_c: float = Field(0, ge=-5, le=5)
     water_cut_pct: float = Field(0, ge=0, le=100)
+    # True: water and heat use the projected next year (engine/forecast.py) instead of the climatology;
+    # temp_delta_c is then ignored.
+    use_forecast: bool = False
 
 
 class Area(BaseModel):
@@ -96,6 +99,9 @@ class ClimateInfo(BaseModel):
     monthly: list[MonthlyClimate]
     forecast_next_year: list[ForecastMonth] | None = None
     forecast_method: str | None = None
+    forecast_year: int | None = None
+    forecast_backtest: dict | None = None  # MAE of the projection vs a climatology baseline, 2021-2025
+    forecast_trend_per_decade: dict | None = None  # {"temp_c": °C/decade, "et0_mm": mm/month per decade}
 
 
 class NdviPoint(BaseModel):

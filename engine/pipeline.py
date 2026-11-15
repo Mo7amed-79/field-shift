@@ -12,7 +12,7 @@ does not invent rotations. Without a pack it falls back to the global
 rotation builder in "exploratory mode" (low confidence).
 """
 
-from engine import climate, explain, market, planner, rotation_builder, scoring, suitability, water_balance
+from engine import climate, explain, forecast, market, planner, rotation_builder, scoring, suitability, water_balance
 
 N_ALTERNATIVES = 2
 SOURCE_PACK_ROTATION = "regional pack rotation (provisional)"
@@ -185,16 +185,27 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
     if unknown:
         raise ValueError(f"Unknown crop ids in current_rotation: {unknown}")
 
-    scenario = request.get("scenario") or {}
+    scenario = dict(request.get("scenario") or {})
     water_access = request["water_access"]
     area = request.get("area")
     clim_now = climate.summarize(raw)
-    clim_scen = water_balance.scenario_climate(raw, scenario.get("temp_delta_c", 0) or 0)
+    projection = forecast.project_next_year(raw)
+    scenario_warnings = []
+    if scenario.get("use_forecast"):
+        if scenario.get("temp_delta_c"):
+            scenario_warnings.append(
+                f"use_forecast is on, so the temperature change of {scenario['temp_delta_c']:+g} °C was ignored: "
+                f"water and heat use the projected {projection['year']} temperature and ET0.")
+            scenario["temp_delta_c"] = 0
+        scenario["projection_year"] = projection["year"]
+        clim_scen = forecast.forecast_climate(clim_now, projection)
+    else:
+        clim_scen = water_balance.scenario_climate(raw, scenario.get("temp_delta_c", 0) or 0)
     soil_ph = soil.get("ph") if soil else None
     ranked = suitability.rank_crops(crops, clim_now, soil, water_access, pack)
     ranked_by_id = {c["id"]: c for c in ranked}
 
-    warnings = []
+    warnings = list(scenario_warnings)
     exploratory = pack is None
     if exploratory:
         warnings.append(EXPLORATORY_WARNING)
@@ -283,6 +294,10 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
         "ground cover (30); it counts practices and is not a measured soil outcome.",
         "Kc values and regional calendars are provisional until verified against FAO-56 Table 12 and local sources.",
     ]
+    if scenario.get("use_forecast"):
+        assumptions.append(
+            f"Scenario uses the projected {projection['year']} temperature and ET0 ({forecast.METHOD}) with "
+            "climatological rain; this is not a weather forecast.")
     if market_table:
         assumptions.append(
             "Indicative gross revenue = national average yield x " + market.basis_text(market_table).split(",")[0]
@@ -303,4 +318,5 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
         "warnings": warnings,
         "assumptions": assumptions,
         "priorities_used": {k: round(v, 3) for k, v in weights.items()},
+        "projection": projection,
     }
