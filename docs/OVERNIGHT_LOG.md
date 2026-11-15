@@ -69,3 +69,10 @@ Times are local (UTC+2), taken from the commit time of each phase. (Correction: 
 - Decision: when `use_forecast` and `temp_delta_c` are both set, the delta is ignored with a warning; stacking them would need ET0 recomputed from projected Tmax/Tmin/RH, which the model does not project.
 - Test expectation changed: `test_climate.py::test_api_climate_uses_engine_offline` asserted `forecast_next_year is None` (stub era); it now asserts 12 months and the method text.
 - **Looks odd:** Punjab shows a *negative* temperature trend (−0.35 °C/decade) and ET0 trend (−7.7 mm/month per decade) in POWER. That is plausibly irrigation cooling or aerosol dimming, but it is worth checking against station data before showing it to farmers.
+
+## 02:43–03:05 — Final
+- Added a CDL step (contiguous-US points only) to `scripts/precache_demo.py`.
+- Precache ran under `timeout 1200`. NDVI fetched for Kafr El-Sheikh (818 s, 15 requests) and Damanhur (373 s, 9 requests). Stopped at the cap (exit 124) during Ludhiana; a partial checkpoint is kept. Iowa and Kansas NDVI not reached.
+- Fixed `ndvi_client.compare_with_calendar` for multi-year rotations: it now compares greenness peaks per year with crops *per year*, not per cycle. Single-year results are unchanged; test added.
+- Regenerated `frontend/mock/compare.json` from a real Tanta run (totals 60.0 / 90.5 / 89.9, matching the regression check).
+- Wrote `docs/OVERNIGHT_REPORT.md`.

@@ -1,6 +1,6 @@
 # Overnight report: branch `overnight-us`
 
-Run on 2026-11-15, 02:18 to about 03:05 (UTC+2), unattended. Every decision and failure is in [`OVERNIGHT_LOG.md`](OVERNIGHT_LOG.md); every contract addition is in [`API_CHANGES.md`](API_CHANGES.md) under "Overnight additions". Tests: **175 passed** (139 at the start). `main` was not touched and nothing was pushed.
+Run on 2026-11-15, 02:18 to 03:05 (UTC+2), unattended. Every decision and failure is in [`OVERNIGHT_LOG.md`](OVERNIGHT_LOG.md); every contract addition is in [`API_CHANGES.md`](API_CHANGES.md) under "Overnight additions". Tests: **175 passed** (139 at the start). `main` was not touched and nothing was pushed.
 
 ## Phase status
 
@@ -69,7 +69,19 @@ The gain is modest (9–31%). It comes mostly from the recent warming offset, no
 
 ## NDVI precache
 
-NDVI_PLACEHOLDER
+`scripts/precache_demo.py` ran from 02:43 to 03:03 under `timeout 1200` (the 20-minute cap) and was stopped (exit 124) while fetching Ludhiana. POWER and SoilGrids were already cached for every point.
+
+| Point | NDVI | Time |
+|---|---|---|
+| Tanta | cached (earlier run) | 0 s |
+| Kafr El-Sheikh | **fetched now**, 69/69 dates, 15 requests | 818 s |
+| Mansoura | cached (earlier run) | 0 s |
+| Damanhur | **fetched now**, 69/69 dates, 9 requests | 373 s |
+| Ludhiana (Punjab) | **not cached**: stopped by the 20-min cap; a resumable `.partial.json` is kept | — |
+| Ames (Iowa) | **not cached** (not reached); CDL cached | — |
+| Hays (Kansas) | **not cached** (not reached); CDL cached | — |
+
+To finish later: `python scripts/precache_demo.py` (it resumes from the partial file). The US points come last in `demo_points.json`.
 
 ## Provisional values a human must verify
 
