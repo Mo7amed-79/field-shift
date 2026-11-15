@@ -10,10 +10,10 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.schemas import (
-    ClimateInfo, CompareRequest, CompareResponse, LocationInfo, NdviResponse, SoilInfo,
+    ClimateInfo, CompareRequest, CompareResponse, FieldHistory, LocationInfo, NdviResponse, SoilInfo,
 )
 from engine import climate as climate_engine
-from engine import ndvi_client, pipeline, power_client, regional, soil_client, water_balance
+from engine import cdl_client, ndvi_client, pipeline, power_client, regional, soil_client, water_balance
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
@@ -175,6 +175,36 @@ def ndvi(lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=-180
                         message="Fetching MODIS NDVI from ORNL DAAC; this can take several minutes. Poll again.")
 
 
+def _field_history(lat: float, lon: float) -> FieldHistory:
+    """CDL field history for a contiguous-US point; status "not_available" elsewhere."""
+    empty = dict(lat=lat, lon=lon, yearly=[], rotation=None, cycle=None, n_years=None, confidence="none",
+                 matched_pack_rotation=None, source=cdl_client.SOURCE)
+    if not cdl_client.in_conus(lat, lon):
+        return FieldHistory(status="not_available", **{**empty, "source": None},
+                            confidence_note="Field history from the USDA Cropland Data Layer is only "
+                                            "available for the contiguous United States.")
+    try:
+        hist = cdl_client.fetch_history(lat, lon)
+    except cdl_client.CdlUnavailableError as e:
+        return FieldHistory(status="unavailable", **empty, confidence_note=f"CropScape could not be reached: {e}")
+    inf = cdl_client.infer_rotation(hist, cdl_client.load_map(), regional.find_pack(lat, lon))
+    return FieldHistory(
+        status=inf["status"], lat=lat, lon=lon,
+        yearly=[{k: y[k] for k in ("year", "cdl_value", "cdl_category", "legend_name", "kind", "crops")}
+                for y in inf["yearly"]],
+        rotation=inf["rotation"], cycle=inf["cycle"], n_years=inf["n_years"], confidence=inf["confidence"],
+        confidence_note=inf["confidence_note"], matched_pack_rotation=inf["matched_pack_rotation"],
+        source=inf["source"], resolution_note=inf["resolution_note"], is_cached=hist["meta"]["is_cached"],
+    )
+
+
+@app.get("/api/field-history", response_model=FieldHistory)
+def field_history(
+    lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=-180, le=180)
+) -> FieldHistory:
+    return _field_history(lat, lon)
+
+
 @app.get("/api/climate", response_model=ClimateInfo)
 def climate(
     lat: float = Query(..., ge=-90, le=90), lon: float = Query(..., ge=-180, le=180)
@@ -189,6 +219,17 @@ def compare(req: CompareRequest) -> CompareResponse:
     soil, soil_info, soil_message = _fetch_soil(req.lat, req.lon)
     pack = regional.find_pack(req.lat, req.lon)
     request = req.model_dump()
+    history = None
+    if not req.current_rotation:
+        history = _field_history(req.lat, req.lon)
+        if history.status != "detected":
+            raise HTTPException(
+                status_code=400,
+                detail="current_rotation is required here: it could not be detected from field history "
+                       f"({history.status}: {history.confidence_note})",
+            )
+        request["current_cycle"] = history.cycle
+        request["current_rotation"] = history.rotation
     try:
         result = pipeline.run_compare(
             raw, soil, request, _load_json(DATA_DIR / "crops.json"), water_balance.load_kc(), pack
@@ -197,6 +238,9 @@ def compare(req: CompareRequest) -> CompareResponse:
         raise HTTPException(status_code=400, detail=str(e))
 
     warnings = list(result["warnings"])
+    if history:
+        warnings.insert(0, "Your current rotation was detected from the USDA Cropland Data Layer, not entered "
+                           f"by you: {history.confidence_note} Correct it if it is wrong.")
     if soil_message:
         warnings.append(soil_message)
     # NDVI is supporting evidence only: read from the cache, never fetched here, never scored.
@@ -226,6 +270,8 @@ def compare(req: CompareRequest) -> CompareResponse:
         sensitivity=result["sensitivity"],
         warnings=warnings,
         assumptions=result["assumptions"],
+        current_rotation_source="cdl_detected" if history else "farmer",
+        field_history=history,
         run_info={
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "note": "Engine output. Climate from NASA POWER "

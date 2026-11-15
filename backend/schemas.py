@@ -27,7 +27,9 @@ class Area(BaseModel):
 class CompareRequest(BaseModel):
     lat: float
     lon: float
-    current_rotation: list[str]  # crop ids, e.g. ["rice", "wheat"]
+    # Crop ids, e.g. ["rice", "wheat"]; "fallow" marks a year without a crop. May be omitted for
+    # contiguous-US points: the rotation is then detected from the USDA Cropland Data Layer.
+    current_rotation: list[str] | None = None
     # ECOCROP rainfall limits only apply to rainfed farming; in irrigated
     # regions such as the Nile Delta rain is not the limiting factor.
     water_access: Literal["rainfed", "limited_irrigation", "full_irrigation"]
@@ -290,6 +292,31 @@ class RunInfo(BaseModel):
     note: str
 
 
+class FieldHistoryYear(BaseModel):
+    year: int
+    cdl_value: int
+    cdl_category: str  # as returned by CropScape
+    legend_name: str | None  # official NASS legend name
+    kind: Literal["crop", "fallow", "non_crop", "other_crop"]
+    crops: list[str] | None  # Field Shift crop ids ([] for fallow, None if not modelled)
+
+
+class FieldHistory(BaseModel):
+    status: Literal["detected", "not_detected", "not_cropland", "not_available", "unavailable"]
+    lat: float
+    lon: float
+    yearly: list[FieldHistoryYear]
+    rotation: list[str] | None  # flat, "fallow" for a year without a crop, e.g. ["wheat", "sorghum", "fallow"]
+    cycle: list[list[str]] | None  # per year of the cycle; [] = fallow year
+    n_years: int | None
+    confidence: Literal["high", "medium", "low", "none"]
+    confidence_note: str
+    matched_pack_rotation: str | None
+    source: str | None
+    resolution_note: str | None = None
+    is_cached: bool | None = None
+
+
 class CompareResponse(BaseModel):
     location: LocationInfo
     climate: ClimateInfo
@@ -307,3 +334,5 @@ class CompareResponse(BaseModel):
     warnings: list[str]
     assumptions: list[str]
     run_info: RunInfo
+    current_rotation_source: Literal["farmer", "cdl_detected"] = "farmer"
+    field_history: FieldHistory | None = None  # only when the rotation was detected from the CDL

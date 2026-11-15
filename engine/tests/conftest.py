@@ -4,7 +4,7 @@
 import pytest
 import requests
 
-from engine import ndvi_client, power_client, soil_client
+from engine import cdl_client, ndvi_client, power_client, soil_client
 
 
 @pytest.fixture(autouse=True)
@@ -13,6 +13,6 @@ def no_network(tmp_path_factory, monkeypatch):
         raise requests.ConnectionError("network disabled in tests")
 
     monkeypatch.setattr(requests, "get", fail)
-    for module in (power_client, soil_client, ndvi_client):
+    for module in (power_client, soil_client, ndvi_client, cdl_client):
         monkeypatch.setattr(module, "CACHE_DIR", tmp_path_factory.mktemp(module.__name__.split(".")[-1]))
         monkeypatch.setattr(module.time, "sleep", lambda s: None)

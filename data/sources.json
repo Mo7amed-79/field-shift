@@ -93,6 +93,18 @@
       "accessed": "2026-11-14",
       "non_nasa": true,
       "status": "provisional — secondary source, not FAOSTAT"
+    },
+    {
+      "name": "USDA NASS Cropland Data Layer (CDL) via CropScape",
+      "url": "https://nassgeodata.gmu.edu/axis2/services/CDLService/GetCDLValue",
+      "documentation": "https://nassgeodata.gmu.edu/CropScape/devhelp/getexamples.html",
+      "access_method": "GetCDLValue?year=YYYY&x=X&y=Y with x/y in USA Contiguous Albers Equal Area Conic (USGS version), EPSG:5070, reprojected with pyproj. One 30 m pixel per year, last 6 available years (2020-2025 on 2026-11-15).",
+      "legend": "Official NASS legend data/raw/cdl_codes_names.xlsx (https://www.nass.usda.gov/sites/default/files/Research_and_Science/Cropland/docs/cdl_codes_names.xlsx); mapping to crop ids in data/cdl_crop_map.json (unverified).",
+      "what_we_use": "Yearly crop class at the clicked field to detect the farmer's current rotation for US points (/api/field-history; /api/compare when current_rotation is omitted).",
+      "citation": "TODO — add the NASS CDL citation (USDA National Agricultural Statistics Service Cropland Data Layer, year, published crop-specific data layer).",
+      "license": "TODO verify",
+      "accessed": "2026-11-15",
+      "non_nasa": true
     }
   ]
 }

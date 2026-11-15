@@ -35,13 +35,15 @@
       "label": "near Ames (Iowa, US)",
       "lat": 42.0,
       "lon": -93.75,
-      "water_access": "rainfed"
+      "water_access": "rainfed",
+      "_note": "CDL 2020-2025 at this pixel: soybeans and corn alternating."
     },
     {
       "label": "near Hays (Kansas, US)",
-      "lat": 38.85,
-      "lon": -99.25,
-      "water_access": "rainfed"
+      "lat": 38.75,
+      "lon": -99.15,
+      "water_access": "rainfed",
+      "_note": "CDL 2020-2025 at this pixel: sorghum, fallow, winter wheat, sorghum, fallow, winter wheat."
     }
   ]
 }

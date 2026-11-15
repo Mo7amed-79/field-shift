@@ -10,7 +10,7 @@ from engine.pipeline import run_compare
 from engine.tests.test_compare import CROPS, KC, _body, _cache, _raw, _soil
 
 IOWA = (42.00, -93.75)
-KANSAS = (38.85, -99.25)
+KANSAS = (38.75, -99.15)
 EQUAL = {"water": 1, "soil": 1, "heat_risk": 1}
 
 

@@ -132,3 +132,22 @@ Label it **"indicative gross revenue"** in the UI. Never call it profit or incom
 | `score_details.water.per_crop[]` | `year`; `water_deficit_mm` replaces `irrigation_mm` when rainfed | |
 
 Request: `current_rotation` may contain `"fallow"` for a year without a crop (e.g. `["wheat", "fallow"]`).
+
+## Phase 4 — field history from the USDA Cropland Data Layer
+
+New endpoint **`GET /api/field-history?lat=&lon=`** → `FieldHistory`:
+
+| Field | Meaning |
+|---|---|
+| `status` | `"detected"`, `"not_detected"` (no repeating pattern / too few years), `"not_cropland"` (pasture, forest, built-up…), `"not_available"` (outside the contiguous US), `"unavailable"` (CropScape down). Never a 500. |
+| `yearly[]` | `{year, cdl_value, cdl_category, legend_name, kind: "crop" \| "fallow" \| "non_crop" \| "other_crop", crops}`, oldest first. |
+| `rotation` | Flat list with `"fallow"` for a year without a crop, e.g. `["wheat", "sorghum", "fallow"]`; can be sent as `current_rotation`. |
+| `cycle` | Per year of the cycle, e.g. `[["wheat"], ["sorghum"], []]`. Double-crop years have two crops. |
+| `n_years`, `confidence` (`high`/`medium`/`low`/`none`), `confidence_note` | Show `confidence_note` to the farmer. |
+| `matched_pack_rotation` | Pack rotation id the cycle matches, or `null`. |
+| `source`, `resolution_note`, `is_cached` | |
+
+`POST /api/compare`:
+- `current_rotation` is now **optional** (was required). If it is omitted for a contiguous-US point and a rotation is detected, the CDL rotation is used; otherwise the response is HTTP 400 with the reason.
+- New response fields: `current_rotation_source` (`"farmer"` or `"cdl_detected"`) and `field_history` (the `FieldHistory` above, only when detected). A warning that starts "Your current rotation was detected from the USDA Cropland Data Layer…" is put first in `warnings`.
+- Internal request key `current_cycle` (list of lists) is filled by the backend from the CDL; the frontend does not need to send it.

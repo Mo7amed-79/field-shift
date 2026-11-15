@@ -62,7 +62,8 @@ def _from_pack_rotation(rot: dict, is_current: bool = False) -> dict:
     }
 
 
-def _current_in_pack(current: list[str], pack: dict, ranked_by_id: dict, crops_by_id: dict) -> dict:
+def _current_in_pack(current: list[str], pack: dict, ranked_by_id: dict, crops_by_id: dict,
+                     years: list[int] | None = None) -> dict:
     """Use a matching pack rotation's windows, else each crop's calendar window, else its global window."""
     for rot in pack.get("typical_rotations", []):
         sig = cycle_signature(rot)
@@ -79,24 +80,30 @@ def _current_in_pack(current: list[str], pack: dict, ranked_by_id: dict, crops_b
 
     windows, caveats = [], []
     n_fallow = current.count(FALLOW)
-    for crop_id in current:
+    for i, crop_id in enumerate(current):
         if crop_id == FALLOW:
             continue
+        year = years[i] if years else 1
         entry = next((e for e in pack.get("crop_calendar", []) if e["crop"] == crop_id), None)
         name = crops_by_id[crop_id]["name_en"]
         if entry:
             src = suitability.SOURCE_REGIONAL_VERIFIED if entry.get("status") == VERIFIED else suitability.SOURCE_REGIONAL
-            windows.append(_window(crop_id, name, entry["start_month"], entry["end_month"], src))
+            windows.append(_window(crop_id, name, entry["start_month"], entry["end_month"], src, year))
         else:
             w = ranked_by_id[crop_id]["suitability"]["best_window"]
-            windows.append(_window(crop_id, name, w["start_month"], w["end_month"], suitability.SOURCE_GLOBAL))
+            windows.append(_window(crop_id, name, w["start_month"], w["end_month"], suitability.SOURCE_GLOBAL,
+                                   year))
             caveats.append(f"{name} has no entry in the {pack['name']} calendar; its window is a global ECOCROP estimate.")
-    if n_fallow:
+    if years:
+        n_years = max(years)
+    elif n_fallow:
+        n_years = 1 + n_fallow if windows else n_fallow
         caveats.append(f"Each 'fallow' entry is treated as a year without a crop after the listed crops "
                        f"({1 + n_fallow}-year cycle).")
     return {
-        "id": "current", "name": " → ".join([w["label"] for w in windows] + ["Fallow"] * n_fallow),
-        "is_current": True, "n_years": 1 + n_fallow if windows else n_fallow,
+        "id": "current",
+        "name": " → ".join(crops_by_id[c]["name_en"] if c != FALLOW else "Fallow" for c in current),
+        "is_current": True, "n_years": n_years if (years or n_fallow) else 1,
         "source": "farmer", "pack_rotation_id": None, "status": None, "crops": windows, "caveats": caveats,
     }
 
@@ -167,7 +174,13 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
                 pack: dict | None) -> dict:
     """Run the full comparison. Raises ValueError for crop ids not in the crop table."""
     crops_by_id = {c["id"]: c for c in crops}
-    current_ids = list(request["current_rotation"])
+    cycle = request.get("current_cycle")  # [[crop ids of year 1], [year 2], ...]; [] = fallow year
+    if cycle:
+        current_ids = [c for year in cycle for c in (year or [FALLOW])]
+        current_years = [i for i, year in enumerate(cycle, 1) for _ in (year or [FALLOW])]
+    else:
+        current_ids = list(request["current_rotation"])
+        current_years = None
     unknown = [c for c in current_ids if c not in crops_by_id and c != FALLOW]
     if unknown:
         raise ValueError(f"Unknown crop ids in current_rotation: {unknown}")
@@ -191,7 +204,7 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
         cands = rotation_builder.build_candidates(ranked, crop_ids, N_ALTERNATIVES, climate_summary=clim_now)
         candidates = [_from_builder(c) for c in cands]
     else:
-        current = _current_in_pack(current_ids, pack, ranked_by_id, crops_by_id)
+        current = _current_in_pack(current_ids, pack, ranked_by_id, crops_by_id, current_years)
         others = [
             _from_pack_rotation(r) for r in pack.get("typical_rotations", [])
             if r["id"] != current["pack_rotation_id"]

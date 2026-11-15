@@ -1,0 +1,53 @@
+{
+ "meta": {
+  "source": "USDA NASS Cropland Data Layer (CropScape GetCDLValue)",
+  "url": "https://nassgeodata.gmu.edu/axis2/services/CDLService/GetCDLValue",
+  "lat": 42.0,
+  "lon": -93.75,
+  "x_albers": 185081.7610815536,
+  "y_albers": 2113103.4793947223,
+  "crs": "EPSG:5070",
+  "latest_year": 2025,
+  "fetched_at": "2026-11-15T00:38:20.811400+00:00",
+  "failed_years": [],
+  "is_cached": false
+ },
+ "years": [
+  {
+   "year": 2020,
+   "value": 5,
+   "category": "Soybeans",
+   "raw": "<ns1:GetCDLValueResponse xmlns:ns1=\"http://cropscape.csiss.gmu.edu/CDLService/\"><Result>{x: 185081.761, y: 2113103.479, value: 5, category: \"Soybeans\", color: \"#267300\"}</Result></ns1:GetCDLValueResponse>"
+  },
+  {
+   "year": 2021,
+   "value": 1,
+   "category": "Corn",
+   "raw": "<ns1:GetCDLValueResponse xmlns:ns1=\"http://cropscape.csiss.gmu.edu/CDLService/\"><Result>{x: 185081.761, y: 2113103.479, value: 1, category: \"Corn\", color: \"#FFD400\"}</Result></ns1:GetCDLValueResponse>"
+  },
+  {
+   "year": 2022,
+   "value": 5,
+   "category": "Soybeans",
+   "raw": "<ns1:GetCDLValueResponse xmlns:ns1=\"http://cropscape.csiss.gmu.edu/CDLService/\"><Result>{x: 185081.761, y: 2113103.479, value: 5, category: \"Soybeans\", color: \"#267300\"}</Result></ns1:GetCDLValueResponse>"
+  },
+  {
+   "year": 2023,
+   "value": 1,
+   "category": "Corn",
+   "raw": "<ns1:GetCDLValueResponse xmlns:ns1=\"http://cropscape.csiss.gmu.edu/CDLService/\"><Result>{x: 185081.761, y: 2113103.479, value: 1, category: \"Corn\", color: \"#FFD400\"}</Result></ns1:GetCDLValueResponse>"
+  },
+  {
+   "year": 2024,
+   "value": 5,
+   "category": "Soybeans",
+   "raw": "<ns1:GetCDLValueResponse xmlns:ns1=\"http://cropscape.csiss.gmu.edu/CDLService/\"><Result>{x: 185081.761, y: 2113103.479, value: 5, category: \"Soybeans\", color: \"#267300\"}</Result></ns1:GetCDLValueResponse>"
+  },
+  {
+   "year": 2025,
+   "value": 1,
+   "category": "Corn",
+   "raw": "<ns1:GetCDLValueResponse xmlns:ns1=\"http://cropscape.csiss.gmu.edu/CDLService/\"><Result>{x: 185081.761, y: 2113103.479, value: 1, category: \"Corn\", color: \"#FFD400\"}</Result></ns1:GetCDLValueResponse>"
+  }
+ ]
+}
