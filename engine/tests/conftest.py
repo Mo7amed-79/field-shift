@@ -16,3 +16,9 @@ def no_network(tmp_path_factory, monkeypatch):
     for module in (power_client, soil_client, ndvi_client, cdl_client):
         monkeypatch.setattr(module, "CACHE_DIR", tmp_path_factory.mktemp(module.__name__.split(".")[-1]))
         monkeypatch.setattr(module.time, "sleep", lambda s: None)
+    # No LLM key from the developer's .env or shell may reach a test (no real chat calls).
+    from backend import chat
+
+    monkeypatch.setattr(chat, "ENV_FILE", tmp_path_factory.mktemp("noenv") / ".env")
+    for var in ("ANTHROPIC_API_KEY", "OPENAI_API_KEY", "LLM_PROVIDER", "LLM_MODEL"):
+        monkeypatch.delenv(var, raising=False)

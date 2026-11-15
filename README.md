@@ -66,6 +66,7 @@ The API is then at http://127.0.0.1:8000 (interactive docs at `/docs`). Endpoint
 - `GET /api/field-history?lat=&lon=` (contiguous US only: yearly USDA Cropland Data Layer crops and the detected rotation)
 - `GET /api/ndvi?lat=&lon=` (MODIS MOD13Q1 NDVI from ORNL DAAC; returns `loading` and fetches in the background if not cached — a fetch takes several minutes)
 - `POST /api/compare` (real: POWER → climate → regional pack → water → scoring → plan → explanation; see `docs/API_CHANGES.md`). `current_rotation` may be omitted for US points (detected from the CDL).
+- `POST /api/chat` (optional, uses an LLM at runtime): `{"question", "compare_request": <same body as /api/compare>, "language": "ar" | "en", "history"}`. Runs the comparison, builds a grounding context from the result (`engine/chat_context.py`) and asks the model to answer only from it. Needs `OPENAI_API_KEY` or `ANTHROPIC_API_KEY` in the environment or in `.env` (git-ignored); optional `LLM_PROVIDER`, `LLM_MODEL` (or `OPENAI_MODEL` / `ANTHROPIC_MODEL`). Without a key it returns 200 with `available: false`. See `backend/chat.py` for the rules given to the model.
 
 Run the tests from the project root with `pytest`.
 

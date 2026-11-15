@@ -181,3 +181,31 @@ Additions only; irrigated responses are unchanged (Tanta regression check passes
 | `why` | — | Rainfed water sentence now reads "rain covers about 46% of wheat's … water demand"; the deficit in mm follows, marked as information. |
 
 **Data:** `data/regional/us_kansas_plains.json`, wheat `crop_calendar` entry gains `stage_fractions` 0.48 / 0.22 / 0.22 / 0.08 (status "provisional — from memory of FAO-56 Table 11 winter wheat, October planting; verify"). `water_balance.apply_pack_overrides` applies a pack's per-crop `stage_fractions` for that pack only.
+
+# Farmer Q&A (branch `farmer-chat`, 2026-11-15)
+
+Purely additive: a new endpoint and new models. No existing endpoint or field changed.
+
+**`POST /api/chat`**, request `ChatRequest`:
+
+| Field | Type | Meaning |
+|---|---|---|
+| `question` | string (1–2000 chars) | The farmer's question. Untrusted: it only ever goes in a user turn. |
+| `compare_request` | `CompareRequest` | Same body as `/api/compare`; the comparison is run again (NDVI from the cache only). A bad body gives the same 400 as `/api/compare`. |
+| `language` | `"ar"` \| `"en"`, default `"ar"` | Answer language. |
+| `history` | list of `{role: "user" \| "assistant", content}`, optional | Earlier turns; only the last 6 are used. |
+
+Response `ChatResponse` (always 200 once the comparison has run):
+
+| Field | Meaning |
+|---|---|
+| `answer` | The model's answer (ends with a "sources used" line), or `null` when unavailable. |
+| `available` | `false` when no API key is configured, the provider errors, or it does not answer within 30 s. |
+| `message` | Why the answer is unavailable (else `null`). |
+| `sources_used` | Context section names parsed from the answer's "sources used" line. |
+| `grounded` | `true` only if every number in the answer appears in the context (rounding allowed). |
+| `numbers_not_in_context` | Numbers in the answer not found in the context (empty when grounded). |
+| `disclosure` | `"AI-generated answer based on your field's analysis"`. |
+| `model` | `"<provider>:<model>"`, e.g. `"openai:gpt-5-mini"`. |
+| `elapsed_s` | Time of the model call. |
+| `context_tokens` | Approximate size of the context sent (limit 6,000; year plans of lower-ranked rotations are dropped first). |
