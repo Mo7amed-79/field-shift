@@ -19,6 +19,66 @@ MAX_TOKENS = 6000
 CHARS_PER_TOKEN = 3.5  # conservative for English text with many numbers
 MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
 PLAN_ROTATIONS = 3
+FALLOW_AR = "بور"
+# Fixed Arabic terms for Arabic answers (supplied by the team); crop names come from crops.json name_ar.
+GLOSSARY_TERMS = [
+    ("feddan", "فدان"), ("EGP", "جنيه"), ("mm", "مم"), ("m3", "متر مكعب"), ("paddy rice", "أرز شعير"),
+    ("milled rice", "أرز أبيض"), ("legume", "محصول بقولي"), ("rotation", "دورة زراعية"),
+    ("irrigation need", "احتياج الري"), ("indicative gross revenue", "إيراد إجمالي تقديري"),
+    ("provisional", "مبدئي"), ("upper bound", "حد أعلى"), ("lower bound", "حد أدنى"),
+    ("national average", "متوسط قومي"), ("fallow", FALLOW_AR), ("t/ha", "طن للهكتار"), ("score", "درجة"),
+    ("extension officer", "المرشد الزراعي"),
+]
+SECTION_AR = {
+    "FIELD AND REQUEST": "بيانات الحقل", "ROTATIONS COMPARED": "مقارنة الدورات",
+    "ALL LOCAL OPTIONS": "كل الدورات المحلية", "SENSITIVITY": "اختبار الأولويات", "WARNINGS": "التحذيرات",
+    "ASSUMPTIONS": "الافتراضات", "SCORING DEFINITIONS": "طريقة التقييم",
+    "CROP FACTS": "بيانات المحاصيل (معاملات الفاو-56 والتقويم الإقليمي)", "CLIMATE (NASA POWER)": "مناخ ناسا باور",
+    "MONTHLY PLAN": "الخطة الشهرية", "DATA SOURCES": "مصادر البيانات",
+}
+_TIMING_WORDS = (
+    "إمتى", "امتى", "متى", "موعد", "ميعاد", "شهر", "أشهر", "اشهر", "شهور", "أزرع", "ازرع", "نزرع", "يزرع", "تزرع",
+    "زراعة", "الزراعة", "بذر", "أحصد", "احصد", "نحصد", "حصاد", "يحصد", "تقويم", "يناير", "فبراير", "مارس", "أبريل",
+    "ابريل", "مايو", "يونيو", "يوليو", "أغسطس", "اغسطس", "سبتمبر", "أكتوبر", "اكتوبر", "نوفمبر", "ديسمبر",
+    "when", "month", "plant", "sow", "harvest", "timing", "calendar", "schedule",
+)
+
+
+def is_timing_question(question: str | None) -> bool:
+    """True when the question is about timing, months, planting or harvest (monthly plans are then sent)."""
+    q = (question or "").lower()
+    return any(w in q for w in _TIMING_WORDS)
+
+
+def _rotation_ar(crops_per_year: list[list[str]], crops_by_id: dict) -> str:
+    seq = []
+    for year in crops_per_year:  # crops follow each other in time, also within one year
+        seq += [crops_by_id.get(c, {}).get("name_ar") or c for c in year] or [FALLOW_AR]
+    return " ثم ".join(seq)
+
+
+def _glossary(c: dict, crops_by_id: dict, pack: dict | None) -> str:
+    crop_ids, rot_names = [], {}
+    for r in c["rotations"]:
+        n = r.get("n_years", 1)
+        per_year = [[w["crop"] for w in r["windows"] if w.get("year", 1) == y] for y in range(1, n + 1)]
+        rot_names[r["name"]] = _rotation_ar(per_year, crops_by_id)
+        crop_ids += [w["crop"] for w in r["windows"]]
+    for rot in (pack or {}).get("typical_rotations", []):
+        n = rot.get("n_years") or max((x.get("year", 1) for x in rot["crops"]), default=1)
+        per_year = [[x["crop"] for x in rot["crops"] if x.get("year", 1) == y] for y in range(1, n + 1)]
+        rot_names.setdefault(rot["name"], _rotation_ar(per_year, crops_by_id))
+        crop_ids += [x["crop"] for x in rot["crops"]]
+    crops_line = "; ".join(f"{crops_by_id[i]['name_en']} = {crops_by_id[i]['name_ar']}"
+                           for i in dict.fromkeys(crop_ids) if i in crops_by_id and crops_by_id[i].get("name_ar"))
+    return "\n".join([
+        "Arabic answers must use these Arabic words and contain no Latin letters at all.",
+        "Crops: " + crops_line + ".",
+        "Rotations (write them exactly like this, never with an arrow or English): "
+        + "; ".join(f"{en} = {ar}" for en, ar in rot_names.items()) + ".",
+        "Terms: " + "; ".join(f"{en} = {ar}" for en, ar in GLOSSARY_TERMS) + ".",
+        "Section names for the sources line: " + "; ".join(f"{en} = {ar}" for en, ar in SECTION_AR.items()) + ".",
+    ])
 
 SCORING_TEXT = """\
 - Each rotation gets three scores from 0 to 100 and a total = weighted mean of the three, using the farmer's priorities (shown under FIELD AND REQUEST).
@@ -225,8 +285,12 @@ def _sources(sources: dict) -> str:
 
 
 def build_context(compare: dict, crops: list[dict], kc: dict, pack: dict | None, sources: dict,
-                  max_tokens: int = MAX_TOKENS) -> dict:
-    """Context sections for the chat model; year plans of lower-ranked rotations are dropped first."""
+                  max_tokens: int = MAX_TOKENS, language: str | None = None, question: str | None = None) -> dict:
+    """Context sections for the chat model; year plans of lower-ranked rotations are dropped first.
+
+    With ``language == "ar"`` an ARABIC GLOSSARY section is added. With a ``question`` that is not about
+    timing, months, planting or harvest, the monthly plans are left out altogether.
+    """
     crops_by_id = {c["id"]: c for c in crops}
     current = next(r for r in compare["rotations"] if r["is_current"])
     by_rank = sorted(compare["rotations"], key=lambda r: r["rank"])
@@ -242,12 +306,17 @@ def build_context(compare: dict, crops: list[dict], kc: dict, pack: dict | None,
         ("CLIMATE (NASA POWER)", _climate(compare)),
         ("DATA SOURCES", _sources(sources)),
     ]
+    if language == "ar":
+        sections.insert(0, ("ARABIC GLOSSARY", _glossary(compare, crops_by_id, pack)))
     plans = [(f"MONTHLY PLAN {i}", _plan(r)) for i, r in enumerate(by_rank[:PLAN_ROTATIONS], 1)]
+    dropped = []
+    if question is not None and not is_timing_question(question):
+        plans = []
+        dropped.append("monthly plans (question not about timing)")
 
     def render(secs):
         return "\n\n".join(f"## {name}\n{body}" for name, body in secs)
 
-    dropped = []
     while True:
         secs = sections[:-1] + plans + sections[-1:]
         text = render(secs)

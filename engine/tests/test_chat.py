@@ -235,3 +235,42 @@ def test_api_chat_with_mocked_model(fake_openai, monkeypatch):
 def test_sources_line_parsed_even_when_glued_to_text():
     _, src = chat.split_sources("ليست تقديراً لغلة حقلك.المصادر المستخدمة: ROTATIONS COMPARED, SCORING DEFINITIONS")
     assert src == ["ROTATIONS COMPARED", "SCORING DEFINITIONS"]
+
+
+# --- Arabic quality, retries, context shrinking -----------------------------------------------
+
+def test_arabic_glossary_and_rotation_names(tanta_compare):
+    ctx = _build(tanta_compare, language="ar", question="لو زرعت ذرة وفول هوفر مياه قد إيه؟")
+    assert ctx["sections"][0] == "ARABIC GLOSSARY"
+    g = ctx["text"].split("## ROTATIONS COMPARED")[0]
+    assert "Maize → Faba bean = ذرة شامية ثم فول بلدي" in g and "Rice → Wheat = أرز ثم قمح" in g
+    assert "paddy rice = أرز شعير" in g and "EGP = جنيه" in g and "upper bound = حد أعلى" in g
+    assert not any(s.startswith("MONTHLY PLAN") for s in ctx["sections"])  # not a timing question
+    assert "monthly plans (question not about timing)" in ctx["dropped"]
+    timing = _build(tanta_compare, language="ar", question="أزرع البرسيم إمتى؟")
+    assert "MONTHLY PLAN 1" in timing["sections"] and timing["approx_tokens"] > ctx["approx_tokens"]
+
+
+def test_latin_words_detected():
+    assert chat.latin_words("يحتاج 1,872.4 مم (m3) و Maize → Berseem") == ["m", "Maize", "Berseem"]
+    assert chat.latin_words("ذرة شامية ثم برسيم: ١٥٬٧٢٨ متر مكعب") == []
+
+
+def test_latin_answer_retried_once_then_flagged(ctx, fake_openai):
+    out = chat.ask(QUESTION, ctx, "ar", settings=OPENAI)  # the fake answer's sources line is in English
+    assert len(fake_openai.calls) == 2 and "CORRECTION" in fake_openai.calls[1]["instructions"]
+    assert out["language_retries"] == 1 and out["language_clean"] is False
+    assert "ROTATIONS" in out["latin_words"]
+
+
+def test_timeout_retried_once(ctx, fake_openai):
+    fake_openai.behaviour = "timeout"
+    out = chat.ask(QUESTION, ctx, "en", settings=OPENAI)
+    assert len(fake_openai.calls) == 2 and out["available"] is False
+
+
+def test_reasoning_effort_lowest_by_model(monkeypatch):
+    monkeypatch.delenv("LLM_REASONING_EFFORT", raising=False)
+    assert chat.reasoning_effort("gpt-6-luna") == "none"
+    assert chat.reasoning_effort("gpt-5-mini") == "minimal"
+    assert chat.reasoning_effort("other-model") == "low"

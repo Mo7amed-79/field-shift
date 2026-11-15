@@ -382,3 +382,7 @@ class ChatResponse(BaseModel):
     model: str | None = None  # "<provider>:<model>"
     elapsed_s: float | None = None  # model call time
     context_tokens: int | None = None  # approximate size of the context sent
+    language_clean: bool | None = None  # Arabic answers: false if Latin-script words remain after one retry
+    latin_words: list[str] = []  # the Latin-script words left in an Arabic answer
+    timeout_retries: int = 0  # automatic retries after a provider timeout (at most 1)
+    language_retries: int = 0  # retries asking for an answer without Latin letters (at most 1)

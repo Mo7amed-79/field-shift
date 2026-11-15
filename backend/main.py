@@ -306,6 +306,7 @@ def chat(req: ChatRequest) -> ChatResponse:
     ctx = chat_context.build_context(
         result.model_dump(mode="json"), _load_json(DATA_DIR / "crops.json"),
         _load_json(water_balance.KC_PATH), pack, _load_json(DATA_DIR / "sources.json"),
+        language=req.language, question=req.question,
     )
     history = [h.model_dump() for h in req.history] if req.history else None
     out = chat_llm.ask(req.question, ctx, req.language, history)
