@@ -77,11 +77,11 @@ The gain is modest (9–31%). It comes mostly from the recent warming offset, no
 | Kafr El-Sheikh | **fetched now**, 69/69 dates, 15 requests | 818 s |
 | Mansoura | cached (earlier run) | 0 s |
 | Damanhur | **fetched now**, 69/69 dates, 9 requests | 373 s |
-| Ludhiana (Punjab) | **not cached**: stopped by the 20-min cap; a resumable `.partial.json` is kept | — |
+| Ludhiana (Punjab) | **not cached**: stopped by the 20-min cap before its first chunk finished, so no partial checkpoint was saved | — |
 | Ames (Iowa) | **not cached** (not reached); CDL cached | — |
 | Hays (Kansas) | **not cached** (not reached); CDL cached | — |
 
-To finish later: `python scripts/precache_demo.py` (it resumes from the partial file). The US points come last in `demo_points.json`.
+To finish later: `python scripts/precache_demo.py` (cached points are skipped). The US points come last in `demo_points.json`.
 
 ## Provisional values a human must verify
 

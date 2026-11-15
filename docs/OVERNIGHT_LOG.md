@@ -72,7 +72,7 @@ Times are local (UTC+2), taken from the commit time of each phase. (Correction: 
 
 ## 02:43–03:05 — Final
 - Added a CDL step (contiguous-US points only) to `scripts/precache_demo.py`.
-- Precache ran under `timeout 1200`. NDVI fetched for Kafr El-Sheikh (818 s, 15 requests) and Damanhur (373 s, 9 requests). Stopped at the cap (exit 124) during Ludhiana; a partial checkpoint is kept. Iowa and Kansas NDVI not reached.
+- Precache ran under `timeout 1200`. NDVI fetched for Kafr El-Sheikh (818 s, 15 requests) and Damanhur (373 s, 9 requests). Stopped at the cap (exit 124) during Ludhiana, before its first chunk finished, so no partial checkpoint exists. Iowa and Kansas NDVI not reached.
 - Fixed `ndvi_client.compare_with_calendar` for multi-year rotations: it now compares greenness peaks per year with crops *per year*, not per cycle. Single-year results are unchanged; test added.
 - Regenerated `frontend/mock/compare.json` from a real Tanta run (totals 60.0 / 90.5 / 89.9, matching the regression check).
 - Wrote `docs/OVERNIGHT_REPORT.md`.
