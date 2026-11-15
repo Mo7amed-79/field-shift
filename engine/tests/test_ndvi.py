@@ -187,3 +187,16 @@ def test_compare_uses_cached_ndvi_without_changing_scores():
     loc = client.get("/api/location", params={"lat": TANTA[0], "lon": TANTA[1]}).json()
     assert loc["ndvi_status"] == "loaded"
     assert client.get("/api/ndvi", params={"lat": TANTA[0], "lon": TANTA[1]}).json()["status"] == "loaded"
+
+
+def test_compare_with_calendar_multi_year_counts_crops_per_year():
+    # Iowa-like: one summer peak per year; maize in year 1 and soybean in year 2 of the cycle.
+    smooth = [0.2, 0.2, 0.2, 0.25, 0.4, 0.6, 0.85, 0.7, 0.5, 0.3, 0.2, 0.2]
+    seasons = {"looks_cropped": True, "smoothed_profile": smooth,
+               "seasons": [{"start_month": 5, "peak_month": 7, "end_month": 9}]}
+    rot = {"windows": [
+        {"crop": "maize", "label": "Maize", "start_month": 5, "end_month": 10, "months": [5, 6, 7, 8, 9, 10], "year": 1},
+        {"crop": "soybean", "label": "Soybean", "start_month": 5, "end_month": 10, "months": [5, 6, 7, 8, 9, 10], "year": 2},
+    ]}
+    check = ndvi_client.compare_with_calendar(seasons, rot)
+    assert check["status"] == "consistent" and "1 crop a year" in check["text"]
