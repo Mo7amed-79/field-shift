@@ -17,3 +17,12 @@ Times are local (UTC+2).
 - Added the three USDA FAS reports to `data/sources.json` (EG2024-0008 URL is the third-party mirror recorded in the market file; official GAIN link TODO).
 - **Agronomically suspicious:** rice revenue uses milled-rice yield × milled-rice price, which includes the milling margin; it is an upper bound and makes rice → wheat look far ahead of every alternative on revenue. A paddy farm-gate price is needed.
 - The two top-ranked Delta alternatives (maize → faba bean, maize → berseem) cannot get a revenue comparison, so the headline trade-off sentence is "no price for Faba bean / Berseem".
+
+## 03:05 — Phase 2: multi-year rotations and rainfed water logic
+- Model: each year of an N-year cycle is treated like the old one-year 12-month frame (windows may wrap, shared transition months are split 50/50 within that year). A year with no crop entries is a fallow year; packs give its length with `"n_years"`.
+- Water: `water_balance.rotation_water_need_cycle` runs the old one-year balance per year; the rotation figure is the mean over the cycle (fallow year = 0 mm). One-year rotations go through the same code path and give identical numbers (regression test green).
+- Heat — decision: the rotation heat score stays the window-length-weighted mean over every crop in the cycle. This equals the mean of the per-year scores weighted by cropped months; a fallow year has no crop to expose, so it is not averaged in as 100.
+- Soil: legume and family diversity over every crop in the cycle; ground cover = cropped months / (12 × N). Fallow months are listed in `fallow_months`.
+- Rainfed: same quantity (ETc − 0.8 × rain) reported as `water_deficit_mm`; irrigation, saving and m3 fields are null; the water budget (`water_cut_pct`) is ignored. The score formula is unchanged: clip(50 + % less deficit than the current rotation).
+- Decision: the farmer can enter `"fallow"` in `current_rotation`. It matches a pack rotation by cycle signature (e.g. `["wheat", "fallow"]`). Multi-year matches ignore order only when the multiset of entries is the same. Exploratory mode ignores fallow entries and warns.
+- **Agronomically questionable:** in rainfed mode a fallow year has 0 deficit, so wheat → fallow scores better on water-deficit exposure than continuous wheat simply because half the years have no crop. That is arithmetic, not stored soil moisture: there is no soil water balance, so the real benefit of fallow (stored moisture for the next wheat crop) is not modelled.

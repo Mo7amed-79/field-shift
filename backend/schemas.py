@@ -114,6 +114,7 @@ class CropWindow(BaseModel):
     end_month: int = Field(ge=1, le=12)
     months: list[int]
     window_source: str
+    year: int = 1  # year of the rotation cycle (1..n_years)
 
 
 class PhAdvisory(BaseModel):
@@ -142,6 +143,8 @@ class YearPlanMonth(BaseModel):
     irrigation_mm: float | None
     irrigation_m3: float | None = None  # only when an area is given
     note: str | None = None
+    year: int = 1  # year of the rotation cycle; the plan has 12 x n_years entries
+    water_deficit_mm: float | None = None  # rainfed only: ETc - effective rain (irrigation fields are None)
 
 
 class RevenueCrop(BaseModel):
@@ -200,6 +203,10 @@ class RotationResult(BaseModel):
     water_saving_m3: float | None = None  # only when an area is given
     exceeds_water_budget: bool | None = None  # only when scenario.water_cut_pct > 0
     water_budget_mm: float | None = None
+    n_years: int = 1  # length of the rotation cycle; water and revenue figures are annual means
+    water_deficit_mm: float | None = None  # rainfed: ETc - effective rain per year (crop water-stress risk)
+    water_deficit_reduction_pct: float | None = None  # rainfed: % less deficit than the current rotation
+    water_criterion_label: str | None = None  # "irrigation water saving" or "water-deficit exposure"
     why: str
     not_assessed: str
     confidence: Literal["low", "medium", "high"]
@@ -227,6 +234,9 @@ class RankedOption(BaseModel):
     is_current: bool
     water_mm_per_year: float | None
     water_saving_pct: float | None
+    water_deficit_mm: float | None = None
+    water_deficit_reduction_pct: float | None = None
+    n_years: int = 1
     scores: Scores
     total: float
     rank: int

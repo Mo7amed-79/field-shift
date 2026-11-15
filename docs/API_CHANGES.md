@@ -116,3 +116,19 @@ All additions are optional or new fields; no existing field was renamed or remov
 Label it **"indicative gross revenue"** in the UI. Never call it profit or income. Revenue is not part of `scores` or `total` for Egypt.
 `why` gains one sentence on revenue: the trade-off with numbers when both rotations are complete, otherwise which crop has no price.
 `not_assessed` now starts with "production costs and current market prices" (regions with a market table) or "crop prices and revenue" (others); it no longer says "income".
+
+## Phase 2 — multi-year rotations and rainfed water logic
+
+| Where | Field | Meaning |
+|---|---|---|
+| `rotations[]`, `all_ranked[]` | `n_years` | Length of the rotation cycle (default 1). Water and revenue figures are **annual means** over the cycle. |
+| `windows[]` | `year` | Year of the cycle the crop belongs to (1..n_years). |
+| `year_plan[]` | `year` | The plan now has 12 × `n_years` entries (still 12 for one-year rotations), ordered year 1 Jan..Dec, year 2 Jan..Dec, … |
+| `year_plan[]` | `water_deficit_mm` | Rainfed only: ETc − effective rain for the month. `irrigation_mm` and `irrigation_m3` are `null` when rainfed. |
+| `rotations[]` | `water_deficit_mm`, `water_deficit_reduction_pct` | Rainfed only (also in `all_ranked[]`). In rainfed mode `water_mm_per_year`, `water_saving_*` and every `*_m3` field are `null`. |
+| `rotations[]` | `water_criterion_label` | `"irrigation water saving"` or `"water-deficit exposure"` (rainfed). Use it as the label of `scores.water`. |
+| `score_details.water` | `label`, `n_years`, `per_year_mm` | Plus, when rainfed, `water_deficit_mm`, `current_rotation_deficit_mm`, `deficit_reduction_mm`, `deficit_reduction_pct`. |
+| `score_details.soil_practices` | `n_years`, `cycle_months`, `cycle_months_with_ground_cover`, `fallow_months` | `fallow_months` = `[{year, month}]`; each counts as zero ground cover. `months_with_ground_cover` is now the annual mean (unchanged for one-year rotations). |
+| `score_details.water.per_crop[]` | `year`; `water_deficit_mm` replaces `irrigation_mm` when rainfed | |
+
+Request: `current_rotation` may contain `"fallow"` for a year without a crop (e.g. `["wheat", "fallow"]`).

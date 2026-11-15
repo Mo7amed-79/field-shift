@@ -25,9 +25,25 @@ EXPLORATORY_WARNING = (
 VERIFIED = "verified"
 
 
-def _window(crop_id: str, label: str, start: int, end: int, source: str) -> dict:
+FALLOW = "fallow"
+
+
+def _window(crop_id: str, label: str, start: int, end: int, source: str, year: int = 1) -> dict:
     return {"crop": crop_id, "label": label, "start_month": start, "end_month": end,
-            "months": suitability.months_between(start, end), "window_source": source}
+            "months": suitability.months_between(start, end), "window_source": source, "year": year}
+
+
+def _pack_years(rot: dict) -> int:
+    return rot.get("n_years") or max((c.get("year", 1) for c in rot["crops"]), default=1)
+
+
+def cycle_signature(rot: dict) -> list[str]:
+    """Crop ids in cycle order, with "fallow" for each year without a crop."""
+    sig = []
+    for y in range(1, _pack_years(rot) + 1):
+        in_year = [c["crop"] for c in rot["crops"] if c.get("year", 1) == y]
+        sig += in_year or [FALLOW]
+    return sig
 
 
 def _from_pack_rotation(rot: dict, is_current: bool = False) -> dict:
@@ -39,7 +55,9 @@ def _from_pack_rotation(rot: dict, is_current: bool = False) -> dict:
         "source": "regional pack",
         "pack_rotation_id": rot["id"],
         "status": rot.get("status"),
-        "crops": [_window(c["crop"], c["label"], c["start_month"], c["end_month"], source) for c in rot["crops"]],
+        "n_years": _pack_years(rot),
+        "crops": [_window(c["crop"], c["label"], c["start_month"], c["end_month"], source, c.get("year", 1))
+                  for c in rot["crops"]],
         "caveats": [],
     }
 
@@ -47,17 +65,23 @@ def _from_pack_rotation(rot: dict, is_current: bool = False) -> dict:
 def _current_in_pack(current: list[str], pack: dict, ranked_by_id: dict, crops_by_id: dict) -> dict:
     """Use a matching pack rotation's windows, else each crop's calendar window, else its global window."""
     for rot in pack.get("typical_rotations", []):
-        if [c["crop"] for c in rot["crops"]] == current or (
-            len(rot["crops"]) == len(current) and {c["crop"] for c in rot["crops"]} == set(current)
-        ):
+        sig = cycle_signature(rot)
+        if sig == current:
+            return _from_pack_rotation(rot, is_current=True)
+        if len(sig) == len(current) and set(sig) == set(current) and _pack_years(rot) == 1:
             r = _from_pack_rotation(rot, is_current=True)
             order = {c: i for i, c in enumerate(current)}
             r["crops"].sort(key=lambda c: order[c["crop"]])
             r["name"] = " → ".join(c["label"] for c in r["crops"])
             return r
+        if len(sig) == len(current) and sorted(sig) == sorted(current):
+            return _from_pack_rotation(rot, is_current=True)  # same multi-year cycle, other starting year
 
     windows, caveats = [], []
+    n_fallow = current.count(FALLOW)
     for crop_id in current:
+        if crop_id == FALLOW:
+            continue
         entry = next((e for e in pack.get("crop_calendar", []) if e["crop"] == crop_id), None)
         name = crops_by_id[crop_id]["name_en"]
         if entry:
@@ -67,8 +91,12 @@ def _current_in_pack(current: list[str], pack: dict, ranked_by_id: dict, crops_b
             w = ranked_by_id[crop_id]["suitability"]["best_window"]
             windows.append(_window(crop_id, name, w["start_month"], w["end_month"], suitability.SOURCE_GLOBAL))
             caveats.append(f"{name} has no entry in the {pack['name']} calendar; its window is a global ECOCROP estimate.")
+    if n_fallow:
+        caveats.append(f"Each 'fallow' entry is treated as a year without a crop after the listed crops "
+                       f"({1 + n_fallow}-year cycle).")
     return {
-        "id": "current", "name": " → ".join(w["label"] for w in windows), "is_current": True,
+        "id": "current", "name": " → ".join([w["label"] for w in windows] + ["Fallow"] * n_fallow),
+        "is_current": True, "n_years": 1 + n_fallow if windows else n_fallow,
         "source": "farmer", "pack_rotation_id": None, "status": None, "crops": windows, "caveats": caveats,
     }
 
@@ -100,7 +128,7 @@ MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
 def _enrich(rot: dict, clim_now: dict, clim_scen: dict, crops_by_id: dict, kc_table: dict,
             water_access: str, soil_ph: float | None, exploratory: bool, paddy_extra: float | None) -> dict:
     rot["crop_info"] = [crops_by_id[c["crop"]] for c in rot["crops"]]
-    rot["water"] = water_balance.rotation_water_need(rot, clim_scen, kc_table, paddy_extra)
+    rot["water"] = water_balance.rotation_water_need_cycle(rot, clim_scen, kc_table, paddy_extra)
     # Pack rotations are local practice: no "any month 0 -> window 0" rule, only a warning.
     zero_rule = "exclude_harvest" if exploratory else "none"
     rot["heat"], rot["suitability"] = [], []
@@ -125,9 +153,12 @@ def _enrich(rot: dict, clim_now: dict, clim_scen: dict, crops_by_id: dict, kc_ta
             "crop": c["crop"], "score": now["score"], "limiting_factor": now["limiting_factor"],
             "window_source": c["window_source"], "ph_advisory": ph,
         })
-    overlap = rotation_builder._illegal_overlap(rot["crops"], allow_transition=True)
-    if overlap:
-        rot["caveats"].append(f"Crop windows overlap in months {overlap}; this sequence may not fit in one year.")
+    for y in range(1, water_balance.rotation_years(rot) + 1):
+        overlap = rotation_builder._illegal_overlap(water_balance.crops_in_year(rot, y), allow_transition=True)
+        if overlap:
+            where = f" of year {y}" if water_balance.rotation_years(rot) > 1 else ""
+            rot["caveats"].append(
+                f"Crop windows overlap in months {overlap}{where}; this sequence may not fit in one year.")
     rot["caveats"] += rot["water"]["caveats"] + rot["water"]["notes"]
     return rot
 
@@ -137,7 +168,7 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
     """Run the full comparison. Raises ValueError for crop ids not in the crop table."""
     crops_by_id = {c["id"]: c for c in crops}
     current_ids = list(request["current_rotation"])
-    unknown = [c for c in current_ids if c not in crops_by_id]
+    unknown = [c for c in current_ids if c not in crops_by_id and c != FALLOW]
     if unknown:
         raise ValueError(f"Unknown crop ids in current_rotation: {unknown}")
 
@@ -154,7 +185,10 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
     exploratory = pack is None
     if exploratory:
         warnings.append(EXPLORATORY_WARNING)
-        cands = rotation_builder.build_candidates(ranked, current_ids, N_ALTERNATIVES, climate_summary=clim_now)
+        if FALLOW in current_ids:
+            warnings.append("Exploratory mode does not model fallow years; 'fallow' entries were ignored.")
+        crop_ids = [c for c in current_ids if c != FALLOW]
+        cands = rotation_builder.build_candidates(ranked, crop_ids, N_ALTERNATIVES, climate_summary=clim_now)
         candidates = [_from_builder(c) for c in cands]
     else:
         current = _current_in_pack(current_ids, pack, ranked_by_id, crops_by_id)
@@ -172,7 +206,7 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
     for rot in candidates:
         _enrich(rot, clim_now, clim_scen, crops_by_id, kc_table, water_access, soil_ph, exploratory,
                 None if exploratory else pack.get("paddy_extra_water_mm"))
-    scoring.score_rotations(candidates, request["priorities"], scenario, "current", area)
+    scoring.score_rotations(candidates, request["priorities"], scenario, "current", area, water_access)
 
     current = candidates[0]
     market_table = None if exploratory else market.load_market(pack)
@@ -189,6 +223,9 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
             {
                 "id": r["pack_rotation_id"] or r["id"], "name": r["name"], "is_current": r["is_current"],
                 "water_mm_per_year": r["water_mm_per_year"], "water_saving_pct": r["water_saving_pct"],
+                "water_deficit_mm": r["water_deficit_mm"],
+                "water_deficit_reduction_pct": r["water_deficit_reduction_pct"],
+                "n_years": r["water"]["n_years"],
                 "scores": r["scores"], "total": r["total"], "rank": i, "revenue": r["revenue"],
             }
             for i, r in enumerate(ordered, 1)
@@ -212,9 +249,11 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
 
     for r in shown:
         r["confidence"] = _confidence(r, kc_table, exploratory)
-        r["year_plan"] = planner.build_year_plan(r, clim_scen, area)
+        r["year_plan"] = planner.build_cycle_plan(r, clim_scen, area, water_access == "rainfed")
+        r["n_years"] = r["water"]["n_years"]
+        key = "water_deficit_mm" if water_access == "rainfed" else "irrigation_mm"
         r["score_details"]["water"]["per_crop"] = [
-            {"crop": p["crop"], "irrigation_mm": round(p["seasonal"]["irrigation_mm"], 1),
+            {"crop": p["crop"], "year": p.get("year", 1), key: round(p["seasonal"]["irrigation_mm"], 1),
              "etc_mm": round(p["seasonal"]["etc_mm"], 1), "kc_status": p["kc_status"]}
             for p in r["water"]["per_crop"] if p["water_assessed"]
         ]

@@ -32,6 +32,8 @@ HEAT_NOTE = (
     "Compares monthly mean temperature with each crop's ECOCROP optimal maximum (harvest month excluded). "
     "It does not model heat at flowering or daily maximum temperatures."
 )
+WATER_LABEL = "irrigation water saving"
+WATER_LABEL_RAINFED = "water-deficit exposure"
 M3_PER_MM = {"feddan": 4.2, "hectare": 10.0, "acre": 4.047}
 SENSITIVITY_CASES = {
     "equal": {"water": 1, "soil": 1, "heat_risk": 1},
@@ -80,17 +82,26 @@ def heat_exposure(crop: dict, months: list[int], climate_summary: dict) -> dict:
 SOIL_POINTS = {"legume_in_rotation": 40.0, "family_diversity": 30.0, "ground_cover": 30.0}
 
 
-def soil_practices(crop_infos: list[dict], months_covered: int) -> tuple[float, dict]:
-    """Three independent parts: legume (40), family diversity (30), ground cover (30)."""
+def soil_practices(crop_infos: list[dict], months_covered: int, n_years: int = 1,
+                   fallow_months: list[dict] | None = None) -> tuple[float, dict]:
+    """Three independent parts: legume (40), family diversity (30), ground cover (30).
+
+    For an N-year cycle ``months_covered`` counts cropped months over the whole cycle (out of
+    12 x N); legume and family diversity are assessed over every crop in the cycle.
+    """
     n = len(crop_infos)
     legume = any(c.get("is_legume") for c in crop_infos)
     families = {c["family"] for c in crop_infos}
     diversity = (len(families) - 1) / (n - 1) if n > 1 else 0.0
-    cover_months = min(months_covered, 12)
+    cycle_months = 12 * n_years
+    cycle_cover = min(months_covered, cycle_months)
+    cover_months = cycle_cover / n_years
+    if n_years == 1:
+        cover_months = int(cover_months)
     parts = {
         "legume_in_rotation": SOIL_POINTS["legume_in_rotation"] * legume,
         "family_diversity": SOIL_POINTS["family_diversity"] * diversity,
-        "ground_cover": SOIL_POINTS["ground_cover"] * cover_months / 12,
+        "ground_cover": SOIL_POINTS["ground_cover"] * cycle_cover / cycle_months,
     }
     return sum(parts.values()), {
         "label": SOIL_LABEL,
@@ -99,8 +110,13 @@ def soil_practices(crop_infos: list[dict], months_covered: int) -> tuple[float, 
         "legume_in_rotation": legume,
         "distinct_families": len(families),
         "n_crops": n,
-        "months_with_ground_cover": cover_months,
-        "method": "legume 40 + 30 x (distinct families - 1) / (crops - 1) + 30 x months with a crop / 12",
+        "months_with_ground_cover": cover_months,  # per year (annual mean for multi-year cycles)
+        "n_years": n_years,
+        "cycle_months": cycle_months,
+        "cycle_months_with_ground_cover": cycle_cover,
+        "fallow_months": fallow_months or [],  # [{year, month}]; each counts as zero ground cover
+        "method": "legume 40 + 30 x (distinct families - 1) / (crops - 1) + 30 x months with a crop / months "
+                  "in the cycle; diversity is assessed over the whole cycle",
         "note": "Counts practices known to support soil health; it is not a measured soil outcome.",
     }
 
@@ -114,9 +130,16 @@ def _weighted_total(scores: dict, weights: dict) -> float:
     return sum(w * scores[PRIORITY_KEYS[k]] for k, w in used.items()) / wsum
 
 
+def _water_quantity(r: dict) -> float | None:
+    """Irrigation need, or water deficit for rainfed farming (mm per year)."""
+    if r.get("water_mm_per_year") is not None:
+        return r["water_mm_per_year"]
+    return r.get("water_deficit_mm")
+
+
 def rank_key(r: dict, weights: dict) -> tuple:
-    """Total (desc), then water need (asc), then id: deterministic."""
-    return (-_weighted_total(r["scores"], weights), r["water_mm_per_year"] or float("inf"), r["id"])
+    """Total (desc), then water need or deficit (asc), then id: deterministic."""
+    return (-_weighted_total(r["scores"], weights), _water_quantity(r) or float("inf"), r["id"])
 
 
 def _rank(rotations: list[dict], weights: dict) -> list[str]:
@@ -147,11 +170,19 @@ def score_rotations(
     scenario: dict,
     current_id: str,
     area: dict | None = None,
+    water_access: str | None = None,
 ) -> list[dict]:
-    """Score ``rotations`` in place on the three criteria and rank them by the weighted total."""
+    """Score ``rotations`` in place on the three criteria and rank them by the weighted total.
+
+    With ``water_access == "rainfed"`` the water quantity (ETc - effective rain) is a water
+    deficit, not an irrigation need: it goes to "water_deficit_mm"; irrigation and m3 fields are None.
+    """
+    rainfed = water_access == "rainfed"
+    if rainfed:
+        area = None  # no m3 figures for a water deficit
     current = next(r for r in rotations if r["id"] == current_id)
     current_need = current["water"]["annual_irrigation_mm"]
-    cut = float(scenario.get("water_cut_pct", 0) or 0)
+    cut = 0.0 if rainfed else float(scenario.get("water_cut_pct", 0) or 0)
 
     for r in rotations:
         need = r["water"]["annual_irrigation_mm"]
@@ -178,8 +209,11 @@ def score_rotations(
             r["exceeds_water_budget"] = None
             r["water_budget_mm"] = None
 
-        months_covered = len({m for c in r["crops"] for m in c["months"]})
-        soil_score, soil_detail = soil_practices(r["crop_info"], months_covered)
+        n_years = r["water"].get("n_years", 1)
+        covered = {(c.get("year", 1), m) for c in r["crops"] for m in c["months"]}
+        fallow = [{"year": y, "month": m} for y in range(1, n_years + 1) for m in range(1, 13)
+                  if (y, m) not in covered]
+        soil_score, soil_detail = soil_practices(r["crop_info"], len(covered), n_years, fallow)
         heat_now, heat_scen, heat_per_crop = _rotation_heat(r)
 
         r["scores"] = {
@@ -195,6 +229,12 @@ def score_rotations(
                 "saving_pct": r["water_saving_pct"],
                 "method": "score = clip(50 + saving %, 0, 100): your current rotation = 50, a 25% saving = 75",
                 "notes": r["water"]["notes"],
+                "label": WATER_LABEL_RAINFED if rainfed else WATER_LABEL,
+                "n_years": n_years,
+                "per_year_mm": [
+                    None if w["annual_irrigation_mm"] is None else round(w["annual_irrigation_mm"], 1)
+                    for w in r["water"].get("per_year", [r["water"]])
+                ],
             },
             "soil_practices": soil_detail,
             "heat_risk": {
@@ -209,6 +249,27 @@ def score_rotations(
                 "note": HEAT_NOTE,
             },
         }
+
+        if rainfed:
+            water = r["score_details"]["water"]
+            r["water_deficit_mm"] = r["water_mm_per_year"]
+            r["water_deficit_reduction_pct"] = r["water_saving_pct"]
+            water.update({
+                "water_deficit_mm": r["water_mm_per_year"],
+                "current_rotation_deficit_mm": water["current_rotation_mm"],
+                "deficit_reduction_mm": water["saving_mm"],
+                "deficit_reduction_pct": water["saving_pct"],
+                "annual_irrigation_mm": None, "current_rotation_mm": None, "saving_mm": None, "saving_pct": None,
+                "method": "water deficit = sum of max(ETc - effective rain, 0) per month (crop water-stress risk, "
+                          "not an irrigation need); score = clip(50 + % less deficit than your current "
+                          "rotation, 0, 100)",
+            })
+            r["water_mm_per_year"] = r["water_saving_mm"] = r["water_saving_pct"] = None
+            r["water_m3_per_year"] = r["water_saving_m3"] = None
+        else:
+            r["water_deficit_mm"] = None
+            r["water_deficit_reduction_pct"] = None
+        r["water_criterion_label"] = WATER_LABEL_RAINFED if rainfed else WATER_LABEL
 
     weights = normalise_priorities(priorities)
     for r in rotations:
