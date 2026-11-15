@@ -31,8 +31,8 @@ def _deficit_sentence(r: dict, current: dict) -> str:
     d = r.get("water_deficit_mm")
     if d is None:
         return "Its water deficit could not be estimated (a crop has no Kc values)."
-    text = (f"Rainfed: its crops face about {d:.0f} mm per year of water deficit{_per_year(r)} "
-            "(crop water use not met by effective rain), an indicator of drought-stress risk")
+    text = (f"Rainfed: its crops face a water deficit of about {d:.0f} mm per year{_per_year(r)}, "
+            "i.e. crop water use not met by effective rain, an indicator of drought-stress risk")
     pct = r.get("water_deficit_reduction_pct")
     if r is current or pct is None:
         return text + "."
