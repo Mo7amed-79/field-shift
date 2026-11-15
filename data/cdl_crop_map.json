@@ -1,0 +1,289 @@
+{
+  "_note": "CDL class codes -> Field Shift crop ids. Codes and names copied from the official NASS legend file data/raw/cdl_codes_names.xlsx (https://www.nass.usda.gov/sites/default/files/Research_and_Science/Cropland/docs/cdl_codes_names.xlsx, linked from the CDL FAQ https://www.nass.usda.gov/Research_and_Science/Cropland/sarsfaqs2.php, accessed 2026-11-15). Only classes with a crop in data/crops.json are mapped; double-crop classes map to two crops in the same year. The mapping (not the codes) was written with AI help and is unverified.",
+  "status": "provisional — mapping unverified",
+  "legend_source": "data/raw/cdl_codes_names.xlsx",
+  "crop_map": {
+    "1": {
+      "legend_name": "Corn",
+      "crops": [
+        "maize"
+      ]
+    },
+    "2": {
+      "legend_name": "Cotton",
+      "crops": [
+        "upland_cotton"
+      ],
+      "note": "CDL 'Cotton' does not separate upland and Pima; mapped to upland_cotton (most US cotton)."
+    },
+    "3": {
+      "legend_name": "Rice",
+      "crops": [
+        "rice"
+      ]
+    },
+    "4": {
+      "legend_name": "Sorghum",
+      "crops": [
+        "sorghum"
+      ]
+    },
+    "5": {
+      "legend_name": "Soybeans",
+      "crops": [
+        "soybean"
+      ]
+    },
+    "6": {
+      "legend_name": "Sunflower",
+      "crops": [
+        "sunflower"
+      ]
+    },
+    "10": {
+      "legend_name": "Peanuts",
+      "crops": [
+        "groundnut"
+      ]
+    },
+    "21": {
+      "legend_name": "Barley",
+      "crops": [
+        "barley"
+      ]
+    },
+    "22": {
+      "legend_name": "Durum_Wheat",
+      "crops": [
+        "wheat"
+      ],
+      "note": "Durum wheat (Triticum durum) mapped to wheat (crops.json has T. aestivum only)."
+    },
+    "23": {
+      "legend_name": "Spring_Wheat",
+      "crops": [
+        "wheat"
+      ],
+      "note": "Spring wheat mapped to wheat; its calendar differs from winter wheat."
+    },
+    "24": {
+      "legend_name": "Winter_Wheat",
+      "crops": [
+        "wheat"
+      ]
+    },
+    "26": {
+      "legend_name": "Dbl_Crop_WinWht/Soybeans",
+      "crops": [
+        "wheat",
+        "soybean"
+      ],
+      "note": "Double crop: winter wheat then soybean in the same year."
+    },
+    "28": {
+      "legend_name": "Oats",
+      "crops": [
+        "oat"
+      ]
+    },
+    "31": {
+      "legend_name": "Canola",
+      "crops": [
+        "rapeseed"
+      ]
+    },
+    "32": {
+      "legend_name": "Flaxseed",
+      "crops": [
+        "flax"
+      ]
+    },
+    "34": {
+      "legend_name": "Rape_Seed",
+      "crops": [
+        "rapeseed"
+      ]
+    },
+    "36": {
+      "legend_name": "Alfalfa",
+      "crops": [
+        "alfalfa"
+      ]
+    },
+    "41": {
+      "legend_name": "Sugarbeets",
+      "crops": [
+        "sugar_beet"
+      ]
+    },
+    "42": {
+      "legend_name": "Dry_Beans",
+      "crops": [
+        "common_bean"
+      ]
+    },
+    "43": {
+      "legend_name": "Potatoes",
+      "crops": [
+        "potato"
+      ]
+    },
+    "46": {
+      "legend_name": "Sweet_Potatoes",
+      "crops": [
+        "sweet_potato"
+      ]
+    },
+    "49": {
+      "legend_name": "Onions",
+      "crops": [
+        "onion"
+      ]
+    },
+    "51": {
+      "legend_name": "Chick_Peas",
+      "crops": [
+        "chickpea"
+      ]
+    },
+    "52": {
+      "legend_name": "Lentils",
+      "crops": [
+        "lentil"
+      ]
+    },
+    "53": {
+      "legend_name": "Peas",
+      "crops": [
+        "pea"
+      ]
+    },
+    "54": {
+      "legend_name": "Tomatoes",
+      "crops": [
+        "tomato"
+      ]
+    },
+    "61": {
+      "legend_name": "Fallow/Idle_Cropland",
+      "crops": [
+        "fallow"
+      ],
+      "note": "Fallow/idle cropland: a year without a harvested crop."
+    },
+    "208": {
+      "legend_name": "Garlic",
+      "crops": [
+        "garlic"
+      ]
+    },
+    "209": {
+      "legend_name": "Cantaloupes",
+      "crops": [
+        "melon"
+      ]
+    },
+    "213": {
+      "legend_name": "Honeydew_Melons",
+      "crops": [
+        "melon"
+      ]
+    },
+    "225": {
+      "legend_name": "Dbl_Crop_WinWht/Corn",
+      "crops": [
+        "wheat",
+        "maize"
+      ]
+    },
+    "226": {
+      "legend_name": "Dbl_Crop_Oats/Corn",
+      "crops": [
+        "oat",
+        "maize"
+      ]
+    },
+    "235": {
+      "legend_name": "Dbl_Crop_Barley/Sorghum",
+      "crops": [
+        "barley",
+        "sorghum"
+      ]
+    },
+    "236": {
+      "legend_name": "Dbl_Crop_WinWht/Sorghum",
+      "crops": [
+        "wheat",
+        "sorghum"
+      ]
+    },
+    "237": {
+      "legend_name": "Dbl_Crop_Barley/Corn",
+      "crops": [
+        "barley",
+        "maize"
+      ]
+    },
+    "238": {
+      "legend_name": "Dbl_Crop_WinWht/Cotton",
+      "crops": [
+        "wheat",
+        "upland_cotton"
+      ]
+    },
+    "239": {
+      "legend_name": "Dbl_Crop_Soybeans/Cotton",
+      "crops": [
+        "soybean",
+        "upland_cotton"
+      ]
+    },
+    "240": {
+      "legend_name": "Dbl_Crop_Soybeans/Oats",
+      "crops": [
+        "soybean",
+        "oat"
+      ]
+    },
+    "241": {
+      "legend_name": "Dbl_Crop_Corn/Soybeans",
+      "crops": [
+        "maize",
+        "soybean"
+      ]
+    },
+    "254": {
+      "legend_name": "Dbl_Crop_Barley/Soybeans",
+      "crops": [
+        "barley",
+        "soybean"
+      ]
+    }
+  },
+  "non_crop_codes": {
+    "0": "NoData",
+    "63": "Forest",
+    "64": "Shrubland",
+    "65": "Barren",
+    "81": "Clouds/No_Data",
+    "82": "Developed",
+    "83": "Water",
+    "87": "Wetlands",
+    "88": "Nonag/Undefined",
+    "92": "Aquaculture",
+    "111": "Open_Water",
+    "112": "Perennial_Ice/Snow_",
+    "121": "Developed/Open_Space",
+    "122": "Developed/Low_Intensity",
+    "123": "Developed/Med_Intensity",
+    "124": "Developed/High_Intensity",
+    "131": "Barren",
+    "141": "Deciduous_Forest",
+    "142": "Evergreen_Forest",
+    "143": "Mixed_Forest",
+    "152": "Shrubland",
+    "176": "Grassland/Pasture",
+    "190": "Woody_Wetlands",
+    "195": "Herbaceous_Wetlands"
+  }
+}

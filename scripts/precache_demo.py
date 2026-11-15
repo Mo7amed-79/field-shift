@@ -1,5 +1,6 @@
 # AI-assisted: generated with Claude (Anthropic) and reviewed by the Field Shift team. See AI_USAGE.md.
-"""Fetch and cache NASA POWER monthly data (1991-2025), SoilGrids topsoil and MODIS NDVI for the demo points.
+"""Fetch and cache NASA POWER monthly data (1991-2025), SoilGrids topsoil, MODIS NDVI and (US points only)
+USDA Cropland Data Layer field history for the demo points.
 
 Run from the project root: python scripts/precache_demo.py
 """
@@ -14,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from engine.power_client import PowerRequestError, PowerUnavailableError, fetch_monthly  # noqa: E402
 from engine.soil_client import SoilUnavailableError, fetch_soil  # noqa: E402
 from engine.ndvi_client import NdviUnavailableError, fetch_ndvi_series  # noqa: E402
+from engine import cdl_client  # noqa: E402
 
 START_YEAR, END_YEAR = 1991, 2025
 # SoilGrids often queues requests for 30-70 s; this is a batch job, so wait longer than the API does.
@@ -53,6 +55,15 @@ def main() -> int:
         except SoilUnavailableError as e:
             failures += 1
             print(f"SOIL  FAIL    {name:<30} {lat:.2f},{lon:.2f}  {e}")
+
+        if cdl_client.in_conus(lat, lon):
+            try:
+                hist = cdl_client.fetch_history(lat, lon)
+                cats = ", ".join(f"{y['year']} {y['category']}" for y in hist["years"])
+                print(f"CDL   {'cached ' if hist['meta']['is_cached'] else 'fetched'} {name:<30} {lat:.2f},{lon:.2f}  {cats}")
+            except cdl_client.CdlUnavailableError as e:
+                failures += 1
+                print(f"CDL   FAIL    {name:<30} {lat:.2f},{lon:.2f}  {e}")
 
         t0 = time.monotonic()
         try:

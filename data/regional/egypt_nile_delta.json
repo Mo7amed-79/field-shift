@@ -8,6 +8,7 @@
     "lon_max": 32.4
   },
   "water_access_default": "full_irrigation",
+  "market_table": "market_egypt.json",
   "_note": "Months are inclusive. A harvest month shared with the next crop's sowing month is allowed in pack rotations and not penalised. All entries are provisional until a researcher confirms them.",
   "crop_calendar": [
     {

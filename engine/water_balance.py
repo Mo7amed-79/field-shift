@@ -185,3 +185,46 @@ def rotation_water_need(
         "notes": [p["note"] for p in per_crop if not p["water_assessed"]],
         "caveats": sorted({c for p in per_crop for c in p.get("caveats", [])}),
     }
+
+
+def rotation_years(rotation: dict) -> int:
+    """Number of years in the rotation cycle (``n_years``, else the largest crop ``year``, else 1)."""
+    return rotation.get("n_years") or max((c.get("year", 1) for c in rotation["crops"]), default=1)
+
+
+def crops_in_year(rotation: dict, year: int) -> list[dict]:
+    return [c for c in rotation["crops"] if c.get("year", 1) == year]
+
+
+def rotation_water_need_cycle(
+    rotation: dict, climate_summary: dict, kc_table: dict, paddy_extra_water_mm: float | None = None
+) -> dict:
+    """``rotation_water_need`` for each year of an N-year cycle, with annual means.
+
+    Each year is treated like a one-year rotation (shared transition months split 50/50 within
+    that year). A year without crops (fallow) needs 0 mm. For a one-year rotation the result
+    equals ``rotation_water_need`` plus "n_years" and "per_year".
+    """
+    n = rotation_years(rotation)
+    per_year = []
+    for y in range(1, n + 1):
+        sub = {**rotation, "crops": crops_in_year(rotation, y)}
+        w = rotation_water_need(sub, climate_summary, kc_table, paddy_extra_water_mm)
+        for p in w["per_crop"]:
+            p["year"] = y
+        w["year"] = y
+        w["fallow_year"] = not sub["crops"]
+        per_year.append(w)
+    if n == 1:
+        return {**per_year[0], "n_years": 1, "per_year": per_year}
+    assessed = all(w["water_assessed"] for w in per_year)
+    return {
+        "per_crop": [p for w in per_year for p in w["per_crop"]],
+        "water_assessed": assessed,
+        "annual_irrigation_mm": sum(w["annual_irrigation_mm"] for w in per_year) / n if assessed else None,
+        "annual_etc_mm": sum(w["annual_etc_mm"] for w in per_year) / n if assessed else None,
+        "notes": [x for w in per_year for x in w["notes"]],
+        "caveats": sorted({c for w in per_year for c in w["caveats"]}),
+        "n_years": n,
+        "per_year": per_year,
+    }

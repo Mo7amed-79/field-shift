@@ -1,0 +1,105 @@
+{
+  "id": "us_iowa_corn_belt",
+  "name": "United States — Iowa (Corn Belt)",
+  "country": "United States",
+  "bbox": {
+    "lat_min": 40.4,
+    "lat_max": 43.5,
+    "lon_min": -96.6,
+    "lon_max": -90.1
+  },
+  "water_access_default": "rainfed",
+  "_note": "Months are inclusive. Each crop entry has a 'year' in the rotation cycle (1..n_years); a year without crops is a fallow year. All entries are provisional (supplied by the team from memory) until a researcher confirms them.",
+  "crop_calendar": [
+    {
+      "crop": "maize",
+      "start_month": 5,
+      "end_month": 10,
+      "status": "provisional — unverified",
+      "source": "TODO"
+    },
+    {
+      "crop": "soybean",
+      "start_month": 5,
+      "end_month": 10,
+      "status": "provisional — unverified",
+      "source": "TODO"
+    },
+    {
+      "crop": "oat",
+      "start_month": 4,
+      "end_month": 7,
+      "status": "provisional — unverified",
+      "source": "TODO"
+    }
+  ],
+  "typical_rotations": [
+    {
+      "id": "maize_soybean",
+      "name": "Maize → Soybean",
+      "crops": [
+        {
+          "crop": "maize",
+          "label": "Maize",
+          "start_month": 5,
+          "end_month": 10,
+          "year": 1
+        },
+        {
+          "crop": "soybean",
+          "label": "Soybean",
+          "start_month": 5,
+          "end_month": 10,
+          "year": 2
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO"
+    },
+    {
+      "id": "continuous_maize",
+      "name": "Continuous maize",
+      "crops": [
+        {
+          "crop": "maize",
+          "label": "Maize",
+          "start_month": 5,
+          "end_month": 10,
+          "year": 1
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO"
+    },
+    {
+      "id": "maize_soybean_oat",
+      "name": "Maize → Soybean → Oat",
+      "crops": [
+        {
+          "crop": "maize",
+          "label": "Maize",
+          "start_month": 5,
+          "end_month": 10,
+          "year": 1
+        },
+        {
+          "crop": "soybean",
+          "label": "Soybean",
+          "start_month": 5,
+          "end_month": 10,
+          "year": 2
+        },
+        {
+          "crop": "oat",
+          "label": "Oat",
+          "start_month": 4,
+          "end_month": 7,
+          "year": 3
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO"
+    }
+  ],
+  "paddy_extra_water_mm": null
+}

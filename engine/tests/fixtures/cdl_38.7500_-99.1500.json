@@ -1,0 +1,53 @@
+{
+ "meta": {
+  "source": "USDA NASS Cropland Data Layer (CropScape GetCDLValue)",
+  "url": "https://nassgeodata.gmu.edu/axis2/services/CDLService/GetCDLValue",
+  "lat": 38.75,
+  "lon": -99.15,
+  "x_albers": -271155.04632798804,
+  "y_albers": 1751383.3806348925,
+  "crs": "EPSG:5070",
+  "latest_year": 2025,
+  "fetched_at": "2026-11-15T00:38:31.551349+00:00",
+  "failed_years": [],
+  "is_cached": false
+ },
+ "years": [
+  {
+   "year": 2020,
+   "value": 4,
+   "category": "Sorghum",
+   "raw": "<ns1:GetCDLValueResponse xmlns:ns1=\"http://cropscape.csiss.gmu.edu/CDLService/\"><Result>{x: -271155.046, y: 1751383.381, value: 4, category: \"Sorghum\", color: \"#FF9E0F\"}</Result></ns1:GetCDLValueResponse>"
+  },
+  {
+   "year": 2021,
+   "value": 61,
+   "category": "Fallow/Idle Cropland",
+   "raw": "<ns1:GetCDLValueResponse xmlns:ns1=\"http://cropscape.csiss.gmu.edu/CDLService/\"><Result>{x: -271155.046, y: 1751383.381, value: 61, category: \"Fallow/Idle Cropland\", color: \"#BFBF7A\"}</Result></ns1:GetCDLValueResponse>"
+  },
+  {
+   "year": 2022,
+   "value": 24,
+   "category": "Winter Wheat",
+   "raw": "<ns1:GetCDLValueResponse xmlns:ns1=\"http://cropscape.csiss.gmu.edu/CDLService/\"><Result>{x: -271155.046, y: 1751383.381, value: 24, category: \"Winter Wheat\", color: \"#A87000\"}</Result></ns1:GetCDLValueResponse>"
+  },
+  {
+   "year": 2023,
+   "value": 4,
+   "category": "Sorghum",
+   "raw": "<ns1:GetCDLValueResponse xmlns:ns1=\"http://cropscape.csiss.gmu.edu/CDLService/\"><Result>{x: -271155.046, y: 1751383.381, value: 4, category: \"Sorghum\", color: \"#FF9E0F\"}</Result></ns1:GetCDLValueResponse>"
+  },
+  {
+   "year": 2024,
+   "value": 61,
+   "category": "Fallow/Idle Cropland",
+   "raw": "<ns1:GetCDLValueResponse xmlns:ns1=\"http://cropscape.csiss.gmu.edu/CDLService/\"><Result>{x: -271155.046, y: 1751383.381, value: 61, category: \"Fallow/Idle Cropland\", color: \"#BFBF7A\"}</Result></ns1:GetCDLValueResponse>"
+  },
+  {
+   "year": 2025,
+   "value": 24,
+   "category": "Winter Wheat",
+   "raw": "<ns1:GetCDLValueResponse xmlns:ns1=\"http://cropscape.csiss.gmu.edu/CDLService/\"><Result>{x: -271155.046, y: 1751383.381, value: 24, category: \"Winter Wheat\", color: \"#A87000\"}</Result></ns1:GetCDLValueResponse>"
+  }
+ ]
+}

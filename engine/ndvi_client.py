@@ -354,15 +354,18 @@ def compare_with_calendar(seasons: dict, rotation: dict) -> dict:
     labels = [_peak_label(s, smooth) for s in peaks]
     peaks_text = " and ".join(labels) if labels else "no clear month"
     matched = sum(c["contains_peak"] for c in per_crop)
-    if matched == len(per_crop) and len(peaks) == len(per_crop):
+    # Multi-year rotations: compare the peaks per year with the crops per year, not per cycle.
+    years = [w.get("year", 1) for w in windows]
+    per_year = max(years.count(y) for y in set(years)) if years else 0
+    if matched == len(per_crop) and len(peaks) == per_year:
         status = "consistent"
-        tail = (f"consistent with {len(per_crop)} crop{'s' if len(per_crop) > 1 else ''} a year as in this "
+        tail = (f"consistent with {per_year} crop{'s' if per_year > 1 else ''} a year as in this "
                 f"rotation ({'; '.join(c['label'] + ' ' + c['window'] for c in per_crop)}).")
     elif matched:
         status = "partly_consistent"
         missing = [f"{c['label']} ({c['window']})" for c in per_crop if not c["contains_peak"]]
         tail = (f"partly consistent with this rotation: no greenness peak falls in the window of "
-                f"{', '.join(missing)}" + (f"; {len(peaks)} peaks were detected" if len(peaks) != len(per_crop) else "") + ".")
+                f"{', '.join(missing)}" + (f"; {len(peaks)} peaks were detected" if len(peaks) != per_year else "") + ".")
     else:
         status = "inconsistent"
         tail = "which does not match this rotation's crop windows."

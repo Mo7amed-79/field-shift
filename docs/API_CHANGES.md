@@ -92,3 +92,75 @@ For the frontend developer. Lists every change to the API contract (`backend/sch
 | `kc` | New: month-average crop coefficient (FAO-56 four-stage curve); in a shared transition month the mix of both crops; `null` when fallow. |
 | `activity` | Unchanged values. In a shared transition month (harvest of one crop, sowing of the next) `crop` is the incoming crop, `activity` is `"plant"`, and `note` explains. |
 | Order | Always 12 entries, January to December. |
+
+# Overnight additions (branch `overnight-us`)
+
+All additions are optional or new fields; no existing field was renamed or removed.
+
+## Phase 1 — indicative gross revenue
+
+| Where | Field | Meaning |
+|---|---|---|
+| `rotations[]`, `all_ranked[]` | `revenue` | New `Revenue` block (always present from the engine; `null`-able in the schema). |
+| `revenue` | `available` | `false` when the region has no market table (e.g. Punjab, exploratory mode). |
+| `revenue` | `complete` | `true` only if every crop has both a yield and a price. |
+| `revenue` | `scored` | `false` everywhere except packs whose market table is complete (see Phase 5). |
+| `revenue` | `currency`, `price_snapshot`, `status` | From the market table (Egypt: EGP, February 2024 procurement prices, provisional). |
+| `revenue` | `per_crop[]` | `{crop, label, year, yield_t_per_ha, price_per_t, revenue_per_ha, revenue_per_feddan, revenue_for_area, yield_basis, price_basis, note, missing}`. |
+| `revenue` | `missing[]` | `{crop, label, missing: ["yield" \| "price"]}`. |
+| `revenue` | `total_per_ha`, `total_per_feddan`, `total_for_area` | Whole rotation cycle; `null` unless `complete`. `total_for_area` only with `area`. |
+| `revenue` | `annual_per_ha`, `annual_per_feddan`, `annual_for_area`, `n_years` | Cycle total / number of years (same as total for one-year rotations). |
+| `revenue` | `revenue_change_pct` | Annual revenue versus the current rotation, %; `null` unless both are complete. |
+| `revenue` | `notes[]` | "gross revenue, no costs", and the rice upper-bound note when rice is present. |
+
+Label it **"indicative gross revenue"** in the UI. Never call it profit or income. Revenue is not part of `scores` or `total` for Egypt.
+`why` gains one sentence on revenue: the trade-off with numbers when both rotations are complete, otherwise which crop has no price.
+`not_assessed` now starts with "production costs and current market prices" (regions with a market table) or "crop prices and revenue" (others); it no longer says "income".
+
+## Phase 2 — multi-year rotations and rainfed water logic
+
+| Where | Field | Meaning |
+|---|---|---|
+| `rotations[]`, `all_ranked[]` | `n_years` | Length of the rotation cycle (default 1). Water and revenue figures are **annual means** over the cycle. |
+| `windows[]` | `year` | Year of the cycle the crop belongs to (1..n_years). |
+| `year_plan[]` | `year` | The plan now has 12 × `n_years` entries (still 12 for one-year rotations), ordered year 1 Jan..Dec, year 2 Jan..Dec, … |
+| `year_plan[]` | `water_deficit_mm` | Rainfed only: ETc − effective rain for the month. `irrigation_mm` and `irrigation_m3` are `null` when rainfed. |
+| `rotations[]` | `water_deficit_mm`, `water_deficit_reduction_pct` | Rainfed only (also in `all_ranked[]`). In rainfed mode `water_mm_per_year`, `water_saving_*` and every `*_m3` field are `null`. |
+| `rotations[]` | `water_criterion_label` | `"irrigation water saving"` or `"water-deficit exposure"` (rainfed). Use it as the label of `scores.water`. |
+| `score_details.water` | `label`, `n_years`, `per_year_mm` | Plus, when rainfed, `water_deficit_mm`, `current_rotation_deficit_mm`, `deficit_reduction_mm`, `deficit_reduction_pct`. |
+| `score_details.soil_practices` | `n_years`, `cycle_months`, `cycle_months_with_ground_cover`, `fallow_months` | `fallow_months` = `[{year, month}]`; each counts as zero ground cover. `months_with_ground_cover` is now the annual mean (unchanged for one-year rotations). |
+| `score_details.water.per_crop[]` | `year`; `water_deficit_mm` replaces `irrigation_mm` when rainfed | |
+
+Request: `current_rotation` may contain `"fallow"` for a year without a crop (e.g. `["wheat", "fallow"]`).
+
+## Phase 4 — field history from the USDA Cropland Data Layer
+
+New endpoint **`GET /api/field-history?lat=&lon=`** → `FieldHistory`:
+
+| Field | Meaning |
+|---|---|
+| `status` | `"detected"`, `"not_detected"` (no repeating pattern / too few years), `"not_cropland"` (pasture, forest, built-up…), `"not_available"` (outside the contiguous US), `"unavailable"` (CropScape down). Never a 500. |
+| `yearly[]` | `{year, cdl_value, cdl_category, legend_name, kind: "crop" \| "fallow" \| "non_crop" \| "other_crop", crops}`, oldest first. |
+| `rotation` | Flat list with `"fallow"` for a year without a crop, e.g. `["wheat", "sorghum", "fallow"]`; can be sent as `current_rotation`. |
+| `cycle` | Per year of the cycle, e.g. `[["wheat"], ["sorghum"], []]`. Double-crop years have two crops. |
+| `n_years`, `confidence` (`high`/`medium`/`low`/`none`), `confidence_note` | Show `confidence_note` to the farmer. |
+| `matched_pack_rotation` | Pack rotation id the cycle matches, or `null`. |
+| `source`, `resolution_note`, `is_cached` | |
+
+`POST /api/compare`:
+- `current_rotation` is now **optional** (was required). If it is omitted for a contiguous-US point and a rotation is detected, the CDL rotation is used; otherwise the response is HTTP 400 with the reason.
+- New response fields: `current_rotation_source` (`"farmer"` or `"cdl_detected"`) and `field_history` (the `FieldHistory` above, only when detected). A warning that starts "Your current rotation was detected from the USDA Cropland Data Layer…" is put first in `warnings`.
+- Internal request key `current_cycle` (list of lists) is filled by the backend from the CDL; the frontend does not need to send it.
+
+## Phase 5 — skipped
+No `NASS_API_KEY` (no `.env` file), so there are no US market tables and no `revenue` priority. `Priorities` is unchanged; `revenue.scored` is always `false`.
+
+## Phase 6 — next-year climate projection
+
+| Where | Field | Meaning |
+|---|---|---|
+| `climate` (`/api/climate`, `/api/compare`) | `forecast_next_year` | Now filled: 12 × `{month, temp_c, et0_mm}` for `forecast_year`. |
+| `climate` | `forecast_method` | Plain text: "Simple statistical projection, not a weather forecast…" plus the back-test verdict (says "does NOT beat" when it loses to climatology). |
+| `climate` | `forecast_year`, `forecast_backtest`, `forecast_trend_per_decade` | New. `forecast_backtest` = `{available, train_years, test_years, n_test_months, temp_c: {mae_model, mae_climatology, skill_vs_climatology, beats_climatology}, et0_mm: {…}}`. |
+| request `scenario` | `use_forecast` (bool, default `false`) | When `true`, water and heat use the projected year (rain stays climatological). `temp_delta_c` is then ignored, with a warning. |
+| `score_details.heat_risk` | `projection_year` | Set when `use_forecast` is on. |

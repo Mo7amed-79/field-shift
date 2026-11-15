@@ -134,6 +134,14 @@
       "kc_end": 0.75,
       "status": "provisional — verify against FAO-56 Table 12",
       "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "oat": {
+      "kc_ini": 0.3,
+      "kc_mid": 1.15,
+      "kc_end": 0.25,
+      "status": "provisional — unverified",
+      "source": "TODO",
+      "_note": "Supplied by the team from memory (overnight run, 2026-11-15); verify against FAO-56 Table 12."
     }
   }
 }

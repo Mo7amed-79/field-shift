@@ -112,8 +112,98 @@
         "et0_mm": 70.0
       }
     ],
-    "forecast_next_year": null,
-    "forecast_method": null
+    "forecast_next_year": [
+      {
+        "month": 1,
+        "temp_c": 13.99,
+        "et0_mm": 69.5
+      },
+      {
+        "month": 2,
+        "temp_c": 14.64,
+        "et0_mm": 78.6
+      },
+      {
+        "month": 3,
+        "temp_c": 17.41,
+        "et0_mm": 122.9
+      },
+      {
+        "month": 4,
+        "temp_c": 21.17,
+        "et0_mm": 164.1
+      },
+      {
+        "month": 5,
+        "temp_c": 25.37,
+        "et0_mm": 216.2
+      },
+      {
+        "month": 6,
+        "temp_c": 28.74,
+        "et0_mm": 238.9
+      },
+      {
+        "month": 7,
+        "temp_c": 30.26,
+        "et0_mm": 245.7
+      },
+      {
+        "month": 8,
+        "temp_c": 30.24,
+        "et0_mm": 224.1
+      },
+      {
+        "month": 9,
+        "temp_c": 28.18,
+        "et0_mm": 184.6
+      },
+      {
+        "month": 10,
+        "temp_c": 24.96,
+        "et0_mm": 142.2
+      },
+      {
+        "month": 11,
+        "temp_c": 20.58,
+        "et0_mm": 97.1
+      },
+      {
+        "month": 12,
+        "temp_c": 16.0,
+        "et0_mm": 73.5
+      }
+    ],
+    "forecast_method": "Simple statistical projection, not a weather forecast: for each variable, a least-squares fit of one mean per calendar month plus a single linear trend over the NASA POWER monthly record, extended 12 months ahead. Rain is not projected (the climatology is used). Back-test (fit 1991–2020, test 2021–2025): temperature: MAE 0.86 °C vs 1.13 for the climatology baseline, so the trend model beats it; ET0: MAE 6.42 mm/month vs 7.05 for the climatology baseline, so the trend model beats it.",
+    "forecast_year": 2026,
+    "forecast_backtest": {
+      "available": true,
+      "train_years": [
+        1991,
+        2020
+      ],
+      "test_years": [
+        2021,
+        2025
+      ],
+      "n_test_months": 60,
+      "temp_c": {
+        "mae_model": 0.863,
+        "mae_climatology": 1.128,
+        "skill_vs_climatology": 0.235,
+        "beats_climatology": true
+      },
+      "et0_mm": {
+        "mae_model": 6.424,
+        "mae_climatology": 7.047,
+        "skill_vs_climatology": 0.088,
+        "beats_climatology": true
+      }
+    },
+    "forecast_trend_per_decade": {
+      "temp_c": 0.362,
+      "et0_mm": 1.923
+    }
   },
   "ndvi": [
     {
@@ -432,7 +522,8 @@
   },
   "scenario": {
     "temp_delta_c": 0.0,
-    "water_cut_pct": 0.0
+    "water_cut_pct": 0.0,
+    "use_forecast": false
   },
   "rotations": [
     {
@@ -456,7 +547,8 @@
             9,
             10
           ],
-          "window_source": "regional pack rotation (provisional)"
+          "window_source": "regional pack rotation (provisional)",
+          "year": 1
         },
         {
           "crop": "wheat",
@@ -472,7 +564,8 @@
             4,
             5
           ],
-          "window_source": "regional pack rotation (provisional)"
+          "window_source": "regional pack rotation (provisional)",
+          "year": 1
         }
       ],
       "is_current": true,
@@ -490,15 +583,22 @@
           "saving_pct": 0.0,
           "method": "score = clip(50 + saving %, 0, 100): your current rotation = 50, a 25% saving = 75",
           "notes": [],
+          "label": "irrigation water saving",
+          "n_years": 1,
+          "per_year_mm": [
+            1872.4
+          ],
           "per_crop": [
             {
               "crop": "rice",
+              "year": 1,
               "irrigation_mm": 1267.1,
               "etc_mm": 1272.6,
               "kc_status": "provisional — verify against FAO-56 Table 12"
             },
             {
               "crop": "wheat",
+              "year": 1,
               "irrigation_mm": 605.3,
               "etc_mm": 658.1,
               "kc_status": "provisional — verify against FAO-56 Table 12"
@@ -521,7 +621,11 @@
           "distinct_families": 1,
           "n_crops": 2,
           "months_with_ground_cover": 12,
-          "method": "legume 40 + 30 x (distinct families - 1) / (crops - 1) + 30 x months with a crop / 12",
+          "n_years": 1,
+          "cycle_months": 12,
+          "cycle_months_with_ground_cover": 12,
+          "fallow_months": [],
+          "method": "legume 40 + 30 x (distinct families - 1) / (crops - 1) + 30 x months with a crop / months in the cycle; diversity is assessed over the whole cycle",
           "note": "Counts practices known to support soil health; it is not a measured soil outcome."
         },
         "heat_risk": {
@@ -548,6 +652,7 @@
           "score_scenario": 100.0,
           "change": 0.0,
           "temp_delta_c": 0.0,
+          "projection_year": null,
           "method": "per crop: clip(100 - 15 x mean excess °C, 0, 100); rotation: mean over crops weighted by window length",
           "note": "Compares monthly mean temperature with each crop's ECOCROP optimal maximum (harvest month excluded). It does not model heat at flowering or daily maximum temperatures."
         }
@@ -561,8 +666,12 @@
       "water_saving_m3": 0.0,
       "exceeds_water_budget": null,
       "water_budget_mm": null,
+      "n_years": 1,
+      "water_deficit_mm": null,
+      "water_deficit_reduction_pct": null,
+      "water_criterion_label": "irrigation water saving",
       "why": "Your current rotation ranks 3rd of 3 (total 60/100). It needs about 1872 mm of irrigation per year (about 7,864 m3 for your field). Soil-health practices (proxy) score 30: it has no legume, uses crops from the same plant family.",
-      "not_assessed": "Not assessed: crop prices and income, pests and diseases, a field-level soil test and water for rice land preparation and percolation.",
+      "not_assessed": "Not assessed: production costs and current market prices, pests and diseases, a field-level soil test and water for rice land preparation and percolation.",
       "confidence": "medium",
       "caveats": [
         "Paddy rice also needs water for land preparation (puddling) and for percolation and seepage, which this ETc estimate does not include, so the rice water need shown is a lower bound."
@@ -617,7 +726,9 @@
           "rain_mm": 14.8,
           "irrigation_mm": 58.7,
           "irrigation_m3": 246.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 2,
@@ -628,7 +739,9 @@
           "rain_mm": 11.8,
           "irrigation_mm": 77.0,
           "irrigation_m3": 323.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 3,
@@ -639,7 +752,9 @@
           "rain_mm": 10.7,
           "irrigation_mm": 128.8,
           "irrigation_m3": 541.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 4,
@@ -650,7 +765,9 @@
           "rain_mm": 7.7,
           "irrigation_mm": 170.8,
           "irrigation_m3": 717.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 5,
@@ -661,7 +778,9 @@
           "rain_mm": 1.1,
           "irrigation_mm": 175.1,
           "irrigation_m3": 735.0,
-          "note": "Harvest Wheat, then plant Rice (shared transition month)."
+          "note": "Harvest Wheat, then plant Rice (shared transition month).",
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 6,
@@ -672,7 +791,9 @@
           "rain_mm": 0.7,
           "irrigation_mm": 260.8,
           "irrigation_m3": 1095.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 7,
@@ -683,7 +804,9 @@
           "rain_mm": 0.3,
           "irrigation_mm": 288.5,
           "irrigation_m3": 1212.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 8,
@@ -694,7 +817,9 @@
           "rain_mm": 0.0,
           "irrigation_mm": 264.7,
           "irrigation_m3": 1112.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 9,
@@ -705,7 +830,9 @@
           "rain_mm": 0.6,
           "irrigation_mm": 215.5,
           "irrigation_m3": 905.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 10,
@@ -716,7 +843,9 @@
           "rain_mm": 4.7,
           "irrigation_mm": 126.3,
           "irrigation_m3": 531.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 11,
@@ -727,7 +856,9 @@
           "rain_mm": 8.7,
           "irrigation_mm": 58.6,
           "irrigation_m3": 246.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 12,
@@ -738,9 +869,66 @@
           "rain_mm": 11.8,
           "irrigation_mm": 47.7,
           "irrigation_m3": 200.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         }
-      ]
+      ],
+      "revenue": {
+        "available": true,
+        "complete": true,
+        "scored": false,
+        "currency": "EGP",
+        "price_snapshot": "February 2024 government procurement / guaranteed prices",
+        "status": "provisional — secondary source (USDA FAS Cairo), NOT FAOSTAT; FAOSTAT could not be reached when this file was built",
+        "per_crop": [
+          {
+            "crop": "rice",
+            "label": "Rice",
+            "year": 1,
+            "yield_t_per_ha": 5.8209,
+            "price_per_t": 27000.0,
+            "revenue_per_ha": 157164.0,
+            "revenue_per_feddan": 66009.0,
+            "revenue_for_area": 66009.0,
+            "yield_basis": "milled-equivalent (3.9 MMT milled / 670,000 ha); rough (paddy) yield is 8.4358 t/ha",
+            "price_basis": "milled rice, market-based (the government does not set a rice procurement price)",
+            "note": "Farmers sell paddy, not milled rice, so milled yield x milled price overstates farm revenue (it includes the milling margin). Treat as an upper bound. The source table's own per-hectare figure multiplies paddy yield by the milled price and is higher still; it is not used here.",
+            "missing": []
+          },
+          {
+            "crop": "wheat",
+            "label": "Wheat",
+            "year": 1,
+            "yield_t_per_ha": 6.5714,
+            "price_per_t": 8333.0,
+            "revenue_per_ha": 54759.0,
+            "revenue_per_feddan": 22999.0,
+            "revenue_for_area": 22999.0,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": "Procurement price was raised to 1,900-2,000 EGP/ardeb on 14 Mar 2024 (EG2024-0023).",
+            "missing": []
+          }
+        ],
+        "missing": [],
+        "n_years": 1,
+        "total_per_ha": 211923.0,
+        "total_per_feddan": 89008.0,
+        "total_for_area": 89008.0,
+        "annual_per_ha": 211923.0,
+        "annual_per_feddan": 89008.0,
+        "annual_for_area": 89008.0,
+        "area": {
+          "value": 1.0,
+          "unit": "feddan"
+        },
+        "revenue_change_pct": 0.0,
+        "notes": [
+          "Indicative gross revenue = yield x price; production costs are not included.",
+          "Rice: Farmers sell paddy, not milled rice, so milled yield x milled price overstates farm revenue (it includes the milling margin). Treat as an upper bound. The source table's own per-hectare figure multiplies paddy yield by the milled price and is higher still; it is not used here."
+        ]
+      }
     },
     {
       "id": "maize_faba_bean",
@@ -762,7 +950,8 @@
             8,
             9
           ],
-          "window_source": "regional pack rotation (provisional)"
+          "window_source": "regional pack rotation (provisional)",
+          "year": 1
         },
         {
           "crop": "faba_bean",
@@ -777,7 +966,8 @@
             3,
             4
           ],
-          "window_source": "regional pack rotation (provisional)"
+          "window_source": "regional pack rotation (provisional)",
+          "year": 1
         }
       ],
       "is_current": false,
@@ -795,15 +985,22 @@
           "saving_pct": 24.0,
           "method": "score = clip(50 + saving %, 0, 100): your current rotation = 50, a 25% saving = 75",
           "notes": [],
+          "label": "irrigation water saving",
+          "n_years": 1,
+          "per_year_mm": [
+            1422.2
+          ],
           "per_crop": [
             {
               "crop": "maize",
+              "year": 1,
               "irrigation_mm": 973.6,
               "etc_mm": 975.7,
               "kc_status": "provisional — verify against FAO-56 Table 12"
             },
             {
               "crop": "faba_bean",
+              "year": 1,
               "irrigation_mm": 448.7,
               "etc_mm": 501.0,
               "kc_status": "provisional — verify against FAO-56 Table 12"
@@ -826,7 +1023,16 @@
           "distinct_families": 2,
           "n_crops": 2,
           "months_with_ground_cover": 11,
-          "method": "legume 40 + 30 x (distinct families - 1) / (crops - 1) + 30 x months with a crop / 12",
+          "n_years": 1,
+          "cycle_months": 12,
+          "cycle_months_with_ground_cover": 11,
+          "fallow_months": [
+            {
+              "year": 1,
+              "month": 10
+            }
+          ],
+          "method": "legume 40 + 30 x (distinct families - 1) / (crops - 1) + 30 x months with a crop / months in the cycle; diversity is assessed over the whole cycle",
           "note": "Counts practices known to support soil health; it is not a measured soil outcome."
         },
         "heat_risk": {
@@ -853,6 +1059,7 @@
           "score_scenario": 100.0,
           "change": 0.0,
           "temp_delta_c": 0.0,
+          "projection_year": null,
           "method": "per crop: clip(100 - 15 x mean excess °C, 0, 100); rotation: mean over crops weighted by window length",
           "note": "Compares monthly mean temperature with each crop's ECOCROP optimal maximum (harvest month excluded). It does not model heat at flowering or daily maximum temperatures."
         }
@@ -866,8 +1073,12 @@
       "water_saving_m3": 1891.0,
       "exceeds_water_budget": null,
       "water_budget_mm": null,
-      "why": "Ranks 1st of 3 (total 90/100). It needs about 1422 mm of irrigation per year (about 5,973 m3 for your field), 450 mm (24%) less than your current rotation. Soil-health practices (proxy) score 98: it includes a legume, leaves 1 month without a crop.",
-      "not_assessed": "Not assessed: crop prices and income, pests and diseases and a field-level soil test.",
+      "n_years": 1,
+      "water_deficit_mm": null,
+      "water_deficit_reduction_pct": null,
+      "water_criterion_label": "irrigation water saving",
+      "why": "Ranks 1st of 3 (total 90/100). It needs about 1422 mm of irrigation per year (about 5,973 m3 for your field), 450 mm (24%) less than your current rotation. Soil-health practices (proxy) score 98: it includes a legume, leaves 1 month without a crop. Indicative gross revenue cannot be compared: this rotation has no price for Faba bean in the market table.",
+      "not_assessed": "Not assessed: production costs and current market prices, pests and diseases and a field-level soil test.",
       "confidence": "medium",
       "caveats": [],
       "suitability": [
@@ -920,7 +1131,9 @@
           "rain_mm": 14.8,
           "irrigation_mm": 61.8,
           "irrigation_m3": 260.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 2,
@@ -931,7 +1144,9 @@
           "rain_mm": 11.8,
           "irrigation_mm": 77.0,
           "irrigation_m3": 323.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 3,
@@ -942,7 +1157,9 @@
           "rain_mm": 10.7,
           "irrigation_mm": 127.1,
           "irrigation_m3": 534.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 4,
@@ -953,7 +1170,9 @@
           "rain_mm": 7.7,
           "irrigation_mm": 98.9,
           "irrigation_m3": 415.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 5,
@@ -964,7 +1183,9 @@
           "rain_mm": 1.1,
           "irrigation_mm": 67.7,
           "irrigation_m3": 284.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 6,
@@ -975,7 +1196,9 @@
           "rain_mm": 0.7,
           "irrigation_mm": 197.2,
           "irrigation_m3": 828.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 7,
@@ -986,7 +1209,9 @@
           "rain_mm": 0.3,
           "irrigation_mm": 290.5,
           "irrigation_m3": 1220.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 8,
@@ -997,7 +1222,9 @@
           "rain_mm": 0.0,
           "irrigation_mm": 264.7,
           "irrigation_m3": 1112.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 9,
@@ -1008,7 +1235,9 @@
           "rain_mm": 0.6,
           "irrigation_mm": 153.4,
           "irrigation_m3": 644.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 10,
@@ -1019,7 +1248,9 @@
           "rain_mm": 4.7,
           "irrigation_mm": 0.0,
           "irrigation_m3": 0.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 11,
@@ -1030,7 +1261,9 @@
           "rain_mm": 8.7,
           "irrigation_mm": 40.1,
           "irrigation_m3": 168.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 12,
@@ -1041,9 +1274,75 @@
           "rain_mm": 11.8,
           "irrigation_mm": 43.8,
           "irrigation_m3": 184.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         }
-      ]
+      ],
+      "revenue": {
+        "available": true,
+        "complete": false,
+        "scored": false,
+        "currency": "EGP",
+        "price_snapshot": "February 2024 government procurement / guaranteed prices",
+        "status": "provisional — secondary source (USDA FAS Cairo), NOT FAOSTAT; FAOSTAT could not be reached when this file was built",
+        "per_crop": [
+          {
+            "crop": "maize",
+            "label": "Maize",
+            "year": 1,
+            "yield_t_per_ha": 7.6087,
+            "price_per_t": 9000.0,
+            "revenue_per_ha": 68478.0,
+            "revenue_per_feddan": 28761.0,
+            "revenue_for_area": 28761.0,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": "White corn price used. Yellow corn: 9,500 EGP/t.",
+            "missing": []
+          },
+          {
+            "crop": "faba_bean",
+            "label": "Faba bean",
+            "year": 1,
+            "yield_t_per_ha": 3.4,
+            "price_per_t": null,
+            "revenue_per_ha": null,
+            "revenue_per_feddan": null,
+            "revenue_for_area": null,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": "No sourced farm price found.",
+            "missing": [
+              "price"
+            ]
+          }
+        ],
+        "missing": [
+          {
+            "crop": "faba_bean",
+            "label": "Faba bean",
+            "missing": [
+              "price"
+            ]
+          }
+        ],
+        "n_years": 1,
+        "total_per_ha": null,
+        "total_per_feddan": null,
+        "total_for_area": null,
+        "annual_per_ha": null,
+        "annual_per_feddan": null,
+        "annual_for_area": null,
+        "area": {
+          "value": 1.0,
+          "unit": "feddan"
+        },
+        "revenue_change_pct": null,
+        "notes": [
+          "Indicative gross revenue = yield x price; production costs are not included."
+        ]
+      }
     },
     {
       "id": "maize_berseem",
@@ -1065,7 +1364,8 @@
             8,
             9
           ],
-          "window_source": "regional pack rotation (provisional)"
+          "window_source": "regional pack rotation (provisional)",
+          "year": 1
         },
         {
           "crop": "berseem",
@@ -1082,7 +1382,8 @@
             4,
             5
           ],
-          "window_source": "regional pack rotation (provisional)"
+          "window_source": "regional pack rotation (provisional)",
+          "year": 1
         }
       ],
       "is_current": false,
@@ -1100,15 +1401,22 @@
           "saving_pct": 19.7,
           "method": "score = clip(50 + saving %, 0, 100): your current rotation = 50, a 25% saving = 75",
           "notes": [],
+          "label": "irrigation water saving",
+          "n_years": 1,
+          "per_year_mm": [
+            1504.3
+          ],
           "per_crop": [
             {
               "crop": "maize",
+              "year": 1,
               "irrigation_mm": 939.7,
               "etc_mm": 941.4,
               "kc_status": "provisional — verify against FAO-56 Table 12"
             },
             {
               "crop": "berseem",
+              "year": 1,
               "irrigation_mm": 564.6,
               "etc_mm": 621.2,
               "kc_status": "provisional — verify against FAO-56 Table 12"
@@ -1131,7 +1439,11 @@
           "distinct_families": 2,
           "n_crops": 2,
           "months_with_ground_cover": 12,
-          "method": "legume 40 + 30 x (distinct families - 1) / (crops - 1) + 30 x months with a crop / 12",
+          "n_years": 1,
+          "cycle_months": 12,
+          "cycle_months_with_ground_cover": 12,
+          "fallow_months": [],
+          "method": "legume 40 + 30 x (distinct families - 1) / (crops - 1) + 30 x months with a crop / months in the cycle; diversity is assessed over the whole cycle",
           "note": "Counts practices known to support soil health; it is not a measured soil outcome."
         },
         "heat_risk": {
@@ -1158,6 +1470,7 @@
           "score_scenario": 100.0,
           "change": 0.0,
           "temp_delta_c": 0.0,
+          "projection_year": null,
           "method": "per crop: clip(100 - 15 x mean excess °C, 0, 100); rotation: mean over crops weighted by window length",
           "note": "Compares monthly mean temperature with each crop's ECOCROP optimal maximum (harvest month excluded). It does not model heat at flowering or daily maximum temperatures."
         }
@@ -1171,8 +1484,12 @@
       "water_saving_m3": 1546.0,
       "exceeds_water_budget": null,
       "water_budget_mm": null,
-      "why": "Ranks 2nd of 3 (total 90/100). It needs about 1504 mm of irrigation per year (about 6,318 m3 for your field), 368 mm (20%) less than your current rotation. Soil-health practices (proxy) score 100: it includes a legume.",
-      "not_assessed": "Not assessed: crop prices and income, pests and diseases and a field-level soil test.",
+      "n_years": 1,
+      "water_deficit_mm": null,
+      "water_deficit_reduction_pct": null,
+      "water_criterion_label": "irrigation water saving",
+      "why": "Ranks 2nd of 3 (total 90/100). It needs about 1504 mm of irrigation per year (about 6,318 m3 for your field), 368 mm (20%) less than your current rotation. Soil-health practices (proxy) score 100: it includes a legume. Indicative gross revenue cannot be compared: this rotation has no price for Berseem in the market table.",
+      "not_assessed": "Not assessed: production costs and current market prices, pests and diseases and a field-level soil test.",
       "confidence": "medium",
       "caveats": [],
       "suitability": [
@@ -1225,7 +1542,9 @@
           "rain_mm": 14.8,
           "irrigation_mm": 47.3,
           "irrigation_m3": 199.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 2,
@@ -1236,7 +1555,9 @@
           "rain_mm": 11.8,
           "irrigation_mm": 58.2,
           "irrigation_m3": 244.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 3,
@@ -1247,7 +1568,9 @@
           "rain_mm": 10.7,
           "irrigation_mm": 98.9,
           "irrigation_m3": 415.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 4,
@@ -1258,7 +1581,9 @@
           "rain_mm": 7.7,
           "irrigation_mm": 137.5,
           "irrigation_m3": 578.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 5,
@@ -1269,7 +1594,9 @@
           "rain_mm": 1.1,
           "irrigation_mm": 125.5,
           "irrigation_m3": 527.0,
-          "note": "Harvest Berseem, then plant Maize (shared transition month)."
+          "note": "Harvest Berseem, then plant Maize (shared transition month).",
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 6,
@@ -1280,7 +1607,9 @@
           "rain_mm": 0.7,
           "irrigation_mm": 197.2,
           "irrigation_m3": 828.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 7,
@@ -1291,7 +1620,9 @@
           "rain_mm": 0.3,
           "irrigation_mm": 290.5,
           "irrigation_m3": 1220.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 8,
@@ -1302,7 +1633,9 @@
           "rain_mm": 0.0,
           "irrigation_mm": 264.7,
           "irrigation_m3": 1112.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 9,
@@ -1313,7 +1646,9 @@
           "rain_mm": 0.6,
           "irrigation_mm": 153.4,
           "irrigation_m3": 644.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 10,
@@ -1324,7 +1659,9 @@
           "rain_mm": 4.7,
           "irrigation_mm": 51.8,
           "irrigation_m3": 217.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 11,
@@ -1335,7 +1672,9 @@
           "rain_mm": 8.7,
           "irrigation_mm": 38.0,
           "irrigation_m3": 160.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         },
         {
           "month": 12,
@@ -1346,9 +1685,77 @@
           "rain_mm": 11.8,
           "irrigation_mm": 41.3,
           "irrigation_m3": 174.0,
-          "note": null
+          "note": null,
+          "year": 1,
+          "water_deficit_mm": null
         }
-      ]
+      ],
+      "revenue": {
+        "available": true,
+        "complete": false,
+        "scored": false,
+        "currency": "EGP",
+        "price_snapshot": "February 2024 government procurement / guaranteed prices",
+        "status": "provisional — secondary source (USDA FAS Cairo), NOT FAOSTAT; FAOSTAT could not be reached when this file was built",
+        "per_crop": [
+          {
+            "crop": "maize",
+            "label": "Maize",
+            "year": 1,
+            "yield_t_per_ha": 7.6087,
+            "price_per_t": 9000.0,
+            "revenue_per_ha": 68478.0,
+            "revenue_per_feddan": 28761.0,
+            "revenue_for_area": 28761.0,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": "White corn price used. Yellow corn: 9,500 EGP/t.",
+            "missing": []
+          },
+          {
+            "crop": "berseem",
+            "label": "Berseem",
+            "year": 1,
+            "yield_t_per_ha": null,
+            "price_per_t": null,
+            "revenue_per_ha": null,
+            "revenue_per_feddan": null,
+            "revenue_for_area": null,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": "Forage crop; no market price in the sources used. Its value is mostly as livestock feed.",
+            "missing": [
+              "yield",
+              "price"
+            ]
+          }
+        ],
+        "missing": [
+          {
+            "crop": "berseem",
+            "label": "Berseem",
+            "missing": [
+              "yield",
+              "price"
+            ]
+          }
+        ],
+        "n_years": 1,
+        "total_per_ha": null,
+        "total_per_feddan": null,
+        "total_for_area": null,
+        "annual_per_ha": null,
+        "annual_per_feddan": null,
+        "annual_for_area": null,
+        "area": {
+          "value": 1.0,
+          "unit": "feddan"
+        },
+        "revenue_change_pct": null,
+        "notes": [
+          "Indicative gross revenue = yield x price; production costs are not included."
+        ]
+      }
     }
   ],
   "all_ranked": [
@@ -1358,13 +1765,80 @@
       "is_current": false,
       "water_mm_per_year": 1422.2,
       "water_saving_pct": 24.0,
+      "water_deficit_mm": null,
+      "water_deficit_reduction_pct": null,
+      "n_years": 1,
       "scores": {
         "water": 74.0,
         "soil_practices": 97.5,
         "heat_risk": 100.0
       },
       "total": 90.5,
-      "rank": 1
+      "rank": 1,
+      "revenue": {
+        "available": true,
+        "complete": false,
+        "scored": false,
+        "currency": "EGP",
+        "price_snapshot": "February 2024 government procurement / guaranteed prices",
+        "status": "provisional — secondary source (USDA FAS Cairo), NOT FAOSTAT; FAOSTAT could not be reached when this file was built",
+        "per_crop": [
+          {
+            "crop": "maize",
+            "label": "Maize",
+            "year": 1,
+            "yield_t_per_ha": 7.6087,
+            "price_per_t": 9000.0,
+            "revenue_per_ha": 68478.0,
+            "revenue_per_feddan": 28761.0,
+            "revenue_for_area": 28761.0,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": "White corn price used. Yellow corn: 9,500 EGP/t.",
+            "missing": []
+          },
+          {
+            "crop": "faba_bean",
+            "label": "Faba bean",
+            "year": 1,
+            "yield_t_per_ha": 3.4,
+            "price_per_t": null,
+            "revenue_per_ha": null,
+            "revenue_per_feddan": null,
+            "revenue_for_area": null,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": "No sourced farm price found.",
+            "missing": [
+              "price"
+            ]
+          }
+        ],
+        "missing": [
+          {
+            "crop": "faba_bean",
+            "label": "Faba bean",
+            "missing": [
+              "price"
+            ]
+          }
+        ],
+        "n_years": 1,
+        "total_per_ha": null,
+        "total_per_feddan": null,
+        "total_for_area": null,
+        "annual_per_ha": null,
+        "annual_per_feddan": null,
+        "annual_for_area": null,
+        "area": {
+          "value": 1.0,
+          "unit": "feddan"
+        },
+        "revenue_change_pct": null,
+        "notes": [
+          "Indicative gross revenue = yield x price; production costs are not included."
+        ]
+      }
     },
     {
       "id": "maize_berseem",
@@ -1372,13 +1846,82 @@
       "is_current": false,
       "water_mm_per_year": 1504.3,
       "water_saving_pct": 19.7,
+      "water_deficit_mm": null,
+      "water_deficit_reduction_pct": null,
+      "n_years": 1,
       "scores": {
         "water": 69.7,
         "soil_practices": 100.0,
         "heat_risk": 100.0
       },
       "total": 89.9,
-      "rank": 2
+      "rank": 2,
+      "revenue": {
+        "available": true,
+        "complete": false,
+        "scored": false,
+        "currency": "EGP",
+        "price_snapshot": "February 2024 government procurement / guaranteed prices",
+        "status": "provisional — secondary source (USDA FAS Cairo), NOT FAOSTAT; FAOSTAT could not be reached when this file was built",
+        "per_crop": [
+          {
+            "crop": "maize",
+            "label": "Maize",
+            "year": 1,
+            "yield_t_per_ha": 7.6087,
+            "price_per_t": 9000.0,
+            "revenue_per_ha": 68478.0,
+            "revenue_per_feddan": 28761.0,
+            "revenue_for_area": 28761.0,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": "White corn price used. Yellow corn: 9,500 EGP/t.",
+            "missing": []
+          },
+          {
+            "crop": "berseem",
+            "label": "Berseem",
+            "year": 1,
+            "yield_t_per_ha": null,
+            "price_per_t": null,
+            "revenue_per_ha": null,
+            "revenue_per_feddan": null,
+            "revenue_for_area": null,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": "Forage crop; no market price in the sources used. Its value is mostly as livestock feed.",
+            "missing": [
+              "yield",
+              "price"
+            ]
+          }
+        ],
+        "missing": [
+          {
+            "crop": "berseem",
+            "label": "Berseem",
+            "missing": [
+              "yield",
+              "price"
+            ]
+          }
+        ],
+        "n_years": 1,
+        "total_per_ha": null,
+        "total_per_feddan": null,
+        "total_for_area": null,
+        "annual_per_ha": null,
+        "annual_per_feddan": null,
+        "annual_for_area": null,
+        "area": {
+          "value": 1.0,
+          "unit": "feddan"
+        },
+        "revenue_change_pct": null,
+        "notes": [
+          "Indicative gross revenue = yield x price; production costs are not included."
+        ]
+      }
     },
     {
       "id": "soybean_wheat",
@@ -1386,13 +1929,70 @@
       "is_current": false,
       "water_mm_per_year": 1549.7,
       "water_saving_pct": 17.2,
+      "water_deficit_mm": null,
+      "water_deficit_reduction_pct": null,
+      "n_years": 1,
       "scores": {
         "water": 67.2,
         "soil_practices": 97.5,
         "heat_risk": 100.0
       },
       "total": 88.2,
-      "rank": 3
+      "rank": 3,
+      "revenue": {
+        "available": true,
+        "complete": true,
+        "scored": false,
+        "currency": "EGP",
+        "price_snapshot": "February 2024 government procurement / guaranteed prices",
+        "status": "provisional — secondary source (USDA FAS Cairo), NOT FAOSTAT; FAOSTAT could not be reached when this file was built",
+        "per_crop": [
+          {
+            "crop": "soybean",
+            "label": "Soybean",
+            "year": 1,
+            "yield_t_per_ha": 2.8333,
+            "price_per_t": 18000.0,
+            "revenue_per_ha": 50999.0,
+            "revenue_per_feddan": 21420.0,
+            "revenue_for_area": 21420.0,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": null,
+            "missing": []
+          },
+          {
+            "crop": "wheat",
+            "label": "Wheat",
+            "year": 1,
+            "yield_t_per_ha": 6.5714,
+            "price_per_t": 8333.0,
+            "revenue_per_ha": 54759.0,
+            "revenue_per_feddan": 22999.0,
+            "revenue_for_area": 22999.0,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": "Procurement price was raised to 1,900-2,000 EGP/ardeb on 14 Mar 2024 (EG2024-0023).",
+            "missing": []
+          }
+        ],
+        "missing": [],
+        "n_years": 1,
+        "total_per_ha": 105758.0,
+        "total_per_feddan": 44418.0,
+        "total_for_area": 44418.0,
+        "annual_per_ha": 105758.0,
+        "annual_per_feddan": 44418.0,
+        "annual_for_area": 44418.0,
+        "area": {
+          "value": 1.0,
+          "unit": "feddan"
+        },
+        "revenue_change_pct": -50.1,
+        "notes": [
+          "Indicative gross revenue = yield x price; production costs are not included."
+        ]
+      }
     },
     {
       "id": "cotton_short_berseem",
@@ -1400,13 +2000,82 @@
       "is_current": false,
       "water_mm_per_year": 1606.1,
       "water_saving_pct": 14.2,
+      "water_deficit_mm": null,
+      "water_deficit_reduction_pct": null,
+      "n_years": 1,
       "scores": {
         "water": 64.2,
         "soil_practices": 100.0,
         "heat_risk": 100.0
       },
       "total": 88.1,
-      "rank": 4
+      "rank": 4,
+      "revenue": {
+        "available": true,
+        "complete": false,
+        "scored": false,
+        "currency": "EGP",
+        "price_snapshot": "February 2024 government procurement / guaranteed prices",
+        "status": "provisional — secondary source (USDA FAS Cairo), NOT FAOSTAT; FAOSTAT could not be reached when this file was built",
+        "per_crop": [
+          {
+            "crop": "cotton",
+            "label": "Cotton",
+            "year": 1,
+            "yield_t_per_ha": 1.443,
+            "price_per_t": 200000.0,
+            "revenue_per_ha": 288600.0,
+            "revenue_per_feddan": 121212.0,
+            "revenue_for_area": 121212.0,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": "Upper Egypt cotton price; Delta (long-staple) prices differ. Season-ending prices in MY2023/24 ranged widely by governorate.",
+            "missing": []
+          },
+          {
+            "crop": "berseem",
+            "label": "Short berseem",
+            "year": 1,
+            "yield_t_per_ha": null,
+            "price_per_t": null,
+            "revenue_per_ha": null,
+            "revenue_per_feddan": null,
+            "revenue_for_area": null,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": "Forage crop; no market price in the sources used. Its value is mostly as livestock feed.",
+            "missing": [
+              "yield",
+              "price"
+            ]
+          }
+        ],
+        "missing": [
+          {
+            "crop": "berseem",
+            "label": "Short berseem",
+            "missing": [
+              "yield",
+              "price"
+            ]
+          }
+        ],
+        "n_years": 1,
+        "total_per_ha": null,
+        "total_per_feddan": null,
+        "total_for_area": null,
+        "annual_per_ha": null,
+        "annual_per_feddan": null,
+        "annual_for_area": null,
+        "area": {
+          "value": 1.0,
+          "unit": "feddan"
+        },
+        "revenue_change_pct": null,
+        "notes": [
+          "Indicative gross revenue = yield x price; production costs are not included."
+        ]
+      }
     },
     {
       "id": "rice_berseem",
@@ -1414,13 +2083,83 @@
       "is_current": false,
       "water_mm_per_year": 1753.7,
       "water_saving_pct": 6.3,
+      "water_deficit_mm": null,
+      "water_deficit_reduction_pct": null,
+      "n_years": 1,
       "scores": {
         "water": 56.3,
         "soil_practices": 100.0,
         "heat_risk": 100.0
       },
       "total": 85.4,
-      "rank": 5
+      "rank": 5,
+      "revenue": {
+        "available": true,
+        "complete": false,
+        "scored": false,
+        "currency": "EGP",
+        "price_snapshot": "February 2024 government procurement / guaranteed prices",
+        "status": "provisional — secondary source (USDA FAS Cairo), NOT FAOSTAT; FAOSTAT could not be reached when this file was built",
+        "per_crop": [
+          {
+            "crop": "rice",
+            "label": "Rice",
+            "year": 1,
+            "yield_t_per_ha": 5.8209,
+            "price_per_t": 27000.0,
+            "revenue_per_ha": 157164.0,
+            "revenue_per_feddan": 66009.0,
+            "revenue_for_area": 66009.0,
+            "yield_basis": "milled-equivalent (3.9 MMT milled / 670,000 ha); rough (paddy) yield is 8.4358 t/ha",
+            "price_basis": "milled rice, market-based (the government does not set a rice procurement price)",
+            "note": "Farmers sell paddy, not milled rice, so milled yield x milled price overstates farm revenue (it includes the milling margin). Treat as an upper bound. The source table's own per-hectare figure multiplies paddy yield by the milled price and is higher still; it is not used here.",
+            "missing": []
+          },
+          {
+            "crop": "berseem",
+            "label": "Berseem",
+            "year": 1,
+            "yield_t_per_ha": null,
+            "price_per_t": null,
+            "revenue_per_ha": null,
+            "revenue_per_feddan": null,
+            "revenue_for_area": null,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": "Forage crop; no market price in the sources used. Its value is mostly as livestock feed.",
+            "missing": [
+              "yield",
+              "price"
+            ]
+          }
+        ],
+        "missing": [
+          {
+            "crop": "berseem",
+            "label": "Berseem",
+            "missing": [
+              "yield",
+              "price"
+            ]
+          }
+        ],
+        "n_years": 1,
+        "total_per_ha": null,
+        "total_per_feddan": null,
+        "total_for_area": null,
+        "annual_per_ha": null,
+        "annual_per_feddan": null,
+        "annual_for_area": null,
+        "area": {
+          "value": 1.0,
+          "unit": "feddan"
+        },
+        "revenue_change_pct": null,
+        "notes": [
+          "Indicative gross revenue = yield x price; production costs are not included.",
+          "Rice: Farmers sell paddy, not milled rice, so milled yield x milled price overstates farm revenue (it includes the milling margin). Treat as an upper bound. The source table's own per-hectare figure multiplies paddy yield by the milled price and is higher still; it is not used here."
+        ]
+      }
     },
     {
       "id": "rice_faba_bean",
@@ -1428,13 +2167,81 @@
       "is_current": false,
       "water_mm_per_year": 1827.1,
       "water_saving_pct": 2.4,
+      "water_deficit_mm": null,
+      "water_deficit_reduction_pct": null,
+      "n_years": 1,
       "scores": {
         "water": 52.4,
         "soil_practices": 100.0,
         "heat_risk": 100.0
       },
       "total": 84.1,
-      "rank": 6
+      "rank": 6,
+      "revenue": {
+        "available": true,
+        "complete": false,
+        "scored": false,
+        "currency": "EGP",
+        "price_snapshot": "February 2024 government procurement / guaranteed prices",
+        "status": "provisional — secondary source (USDA FAS Cairo), NOT FAOSTAT; FAOSTAT could not be reached when this file was built",
+        "per_crop": [
+          {
+            "crop": "rice",
+            "label": "Rice",
+            "year": 1,
+            "yield_t_per_ha": 5.8209,
+            "price_per_t": 27000.0,
+            "revenue_per_ha": 157164.0,
+            "revenue_per_feddan": 66009.0,
+            "revenue_for_area": 66009.0,
+            "yield_basis": "milled-equivalent (3.9 MMT milled / 670,000 ha); rough (paddy) yield is 8.4358 t/ha",
+            "price_basis": "milled rice, market-based (the government does not set a rice procurement price)",
+            "note": "Farmers sell paddy, not milled rice, so milled yield x milled price overstates farm revenue (it includes the milling margin). Treat as an upper bound. The source table's own per-hectare figure multiplies paddy yield by the milled price and is higher still; it is not used here.",
+            "missing": []
+          },
+          {
+            "crop": "faba_bean",
+            "label": "Faba bean",
+            "year": 1,
+            "yield_t_per_ha": 3.4,
+            "price_per_t": null,
+            "revenue_per_ha": null,
+            "revenue_per_feddan": null,
+            "revenue_for_area": null,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": "No sourced farm price found.",
+            "missing": [
+              "price"
+            ]
+          }
+        ],
+        "missing": [
+          {
+            "crop": "faba_bean",
+            "label": "Faba bean",
+            "missing": [
+              "price"
+            ]
+          }
+        ],
+        "n_years": 1,
+        "total_per_ha": null,
+        "total_per_feddan": null,
+        "total_for_area": null,
+        "annual_per_ha": null,
+        "annual_per_feddan": null,
+        "annual_for_area": null,
+        "area": {
+          "value": 1.0,
+          "unit": "feddan"
+        },
+        "revenue_change_pct": null,
+        "notes": [
+          "Indicative gross revenue = yield x price; production costs are not included.",
+          "Rice: Farmers sell paddy, not milled rice, so milled yield x milled price overstates farm revenue (it includes the milling margin). Treat as an upper bound. The source table's own per-hectare figure multiplies paddy yield by the milled price and is higher still; it is not used here."
+        ]
+      }
     },
     {
       "id": "maize_wheat",
@@ -1442,13 +2249,70 @@
       "is_current": false,
       "water_mm_per_year": 1545.0,
       "water_saving_pct": 17.5,
+      "water_deficit_mm": null,
+      "water_deficit_reduction_pct": null,
+      "n_years": 1,
       "scores": {
         "water": 67.5,
         "soil_practices": 27.5,
         "heat_risk": 100.0
       },
       "total": 65.0,
-      "rank": 7
+      "rank": 7,
+      "revenue": {
+        "available": true,
+        "complete": true,
+        "scored": false,
+        "currency": "EGP",
+        "price_snapshot": "February 2024 government procurement / guaranteed prices",
+        "status": "provisional — secondary source (USDA FAS Cairo), NOT FAOSTAT; FAOSTAT could not be reached when this file was built",
+        "per_crop": [
+          {
+            "crop": "maize",
+            "label": "Maize",
+            "year": 1,
+            "yield_t_per_ha": 7.6087,
+            "price_per_t": 9000.0,
+            "revenue_per_ha": 68478.0,
+            "revenue_per_feddan": 28761.0,
+            "revenue_for_area": 28761.0,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": "White corn price used. Yellow corn: 9,500 EGP/t.",
+            "missing": []
+          },
+          {
+            "crop": "wheat",
+            "label": "Wheat",
+            "year": 1,
+            "yield_t_per_ha": 6.5714,
+            "price_per_t": 8333.0,
+            "revenue_per_ha": 54759.0,
+            "revenue_per_feddan": 22999.0,
+            "revenue_for_area": 22999.0,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": "Procurement price was raised to 1,900-2,000 EGP/ardeb on 14 Mar 2024 (EG2024-0023).",
+            "missing": []
+          }
+        ],
+        "missing": [],
+        "n_years": 1,
+        "total_per_ha": 123237.0,
+        "total_per_feddan": 51760.0,
+        "total_for_area": 51760.0,
+        "annual_per_ha": 123237.0,
+        "annual_per_feddan": 51760.0,
+        "annual_for_area": 51760.0,
+        "area": {
+          "value": 1.0,
+          "unit": "feddan"
+        },
+        "revenue_change_pct": -41.8,
+        "notes": [
+          "Indicative gross revenue = yield x price; production costs are not included."
+        ]
+      }
     },
     {
       "id": "rice_wheat",
@@ -1456,13 +2320,71 @@
       "is_current": true,
       "water_mm_per_year": 1872.4,
       "water_saving_pct": 0.0,
+      "water_deficit_mm": null,
+      "water_deficit_reduction_pct": null,
+      "n_years": 1,
       "scores": {
         "water": 50.0,
         "soil_practices": 30.0,
         "heat_risk": 100.0
       },
       "total": 60.0,
-      "rank": 8
+      "rank": 8,
+      "revenue": {
+        "available": true,
+        "complete": true,
+        "scored": false,
+        "currency": "EGP",
+        "price_snapshot": "February 2024 government procurement / guaranteed prices",
+        "status": "provisional — secondary source (USDA FAS Cairo), NOT FAOSTAT; FAOSTAT could not be reached when this file was built",
+        "per_crop": [
+          {
+            "crop": "rice",
+            "label": "Rice",
+            "year": 1,
+            "yield_t_per_ha": 5.8209,
+            "price_per_t": 27000.0,
+            "revenue_per_ha": 157164.0,
+            "revenue_per_feddan": 66009.0,
+            "revenue_for_area": 66009.0,
+            "yield_basis": "milled-equivalent (3.9 MMT milled / 670,000 ha); rough (paddy) yield is 8.4358 t/ha",
+            "price_basis": "milled rice, market-based (the government does not set a rice procurement price)",
+            "note": "Farmers sell paddy, not milled rice, so milled yield x milled price overstates farm revenue (it includes the milling margin). Treat as an upper bound. The source table's own per-hectare figure multiplies paddy yield by the milled price and is higher still; it is not used here.",
+            "missing": []
+          },
+          {
+            "crop": "wheat",
+            "label": "Wheat",
+            "year": 1,
+            "yield_t_per_ha": 6.5714,
+            "price_per_t": 8333.0,
+            "revenue_per_ha": 54759.0,
+            "revenue_per_feddan": 22999.0,
+            "revenue_for_area": 22999.0,
+            "yield_basis": null,
+            "price_basis": null,
+            "note": "Procurement price was raised to 1,900-2,000 EGP/ardeb on 14 Mar 2024 (EG2024-0023).",
+            "missing": []
+          }
+        ],
+        "missing": [],
+        "n_years": 1,
+        "total_per_ha": 211923.0,
+        "total_per_feddan": 89008.0,
+        "total_for_area": 89008.0,
+        "annual_per_ha": 211923.0,
+        "annual_per_feddan": 89008.0,
+        "annual_for_area": 89008.0,
+        "area": {
+          "value": 1.0,
+          "unit": "feddan"
+        },
+        "revenue_change_pct": 0.0,
+        "notes": [
+          "Indicative gross revenue = yield x price; production costs are not included.",
+          "Rice: Farmers sell paddy, not milled rice, so milled yield x milled price overstates farm revenue (it includes the milling margin). Treat as an upper bound. The source table's own per-hectare figure multiplies paddy yield by the milled price and is higher still; it is not used here."
+        ]
+      }
     }
   ],
   "current_is_strong": false,
@@ -1549,10 +2471,13 @@
     "Water score = clip(50 + % irrigation saved versus your current rotation, 0, 100): your current rotation scores 50 and a 25% saving scores 75.",
     "Heat-stress exposure (proxy): Compares monthly mean temperature with each crop's ECOCROP optimal maximum (harvest month excluded). It does not model heat at flowering or daily maximum temperatures.",
     "Soil-health practices (proxy) = legume in rotation (40) + plant-family diversity (30) + months with ground cover (30); it counts practices and is not a measured soil outcome.",
-    "Kc values and regional calendars are provisional until verified against FAO-56 Table 12 and local sources."
+    "Kc values and regional calendars are provisional until verified against FAO-56 Table 12 and local sources.",
+    "Indicative gross revenue = national average yield x February 2024 procurement prices; it is shown for information only and is not part of the scores."
   ],
   "run_info": {
-    "generated_at": "2026-11-14T23:22:48.411421+00:00",
-    "note": "REAL engine output (not sample data) for the demo point near Tanta (30.85, 31.05), run on 2026-11-14 from cached NASA POWER 1991–2025, SoilGrids and MODIS MOD13Q1 NDVI 2023–2025 data, saved as a frontend mock. Request: current rice → wheat, full irrigation, equal priorities, 1 feddan. Kc values and regional calendars are provisional."
-  }
+    "generated_at": "2026-11-15T00:44:40.154159+00:00",
+    "note": "REAL engine output (not sample data) for the demo point near Tanta (30.85, 31.05), run on 2026-11-15 (overnight branch) from cached NASA POWER 1991–2025, SoilGrids and MODIS MOD13Q1 NDVI 2023–2025 data, saved as a frontend mock. Request: current rice → wheat, full irrigation, equal priorities, 1 feddan. Includes indicative gross revenue (Egypt, February 2024 prices) and the 2026 projection. Kc values, regional calendars and prices are provisional."
+  },
+  "current_rotation_source": "farmer",
+  "field_history": null
 }

@@ -17,6 +17,9 @@ class Priorities(BaseModel):
 class Scenario(BaseModel):
     temp_delta_c: float = Field(0, ge=-5, le=5)
     water_cut_pct: float = Field(0, ge=0, le=100)
+    # True: water and heat use the projected next year (engine/forecast.py) instead of the climatology;
+    # temp_delta_c is then ignored.
+    use_forecast: bool = False
 
 
 class Area(BaseModel):
@@ -27,7 +30,9 @@ class Area(BaseModel):
 class CompareRequest(BaseModel):
     lat: float
     lon: float
-    current_rotation: list[str]  # crop ids, e.g. ["rice", "wheat"]
+    # Crop ids, e.g. ["rice", "wheat"]; "fallow" marks a year without a crop. May be omitted for
+    # contiguous-US points: the rotation is then detected from the USDA Cropland Data Layer.
+    current_rotation: list[str] | None = None
     # ECOCROP rainfall limits only apply to rainfed farming; in irrigated
     # regions such as the Nile Delta rain is not the limiting factor.
     water_access: Literal["rainfed", "limited_irrigation", "full_irrigation"]
@@ -94,6 +99,9 @@ class ClimateInfo(BaseModel):
     monthly: list[MonthlyClimate]
     forecast_next_year: list[ForecastMonth] | None = None
     forecast_method: str | None = None
+    forecast_year: int | None = None
+    forecast_backtest: dict | None = None  # MAE of the projection vs a climatology baseline, 2021-2025
+    forecast_trend_per_decade: dict | None = None  # {"temp_c": °C/decade, "et0_mm": mm/month per decade}
 
 
 class NdviPoint(BaseModel):
@@ -114,6 +122,7 @@ class CropWindow(BaseModel):
     end_month: int = Field(ge=1, le=12)
     months: list[int]
     window_source: str
+    year: int = 1  # year of the rotation cycle (1..n_years)
 
 
 class PhAdvisory(BaseModel):
@@ -142,6 +151,46 @@ class YearPlanMonth(BaseModel):
     irrigation_mm: float | None
     irrigation_m3: float | None = None  # only when an area is given
     note: str | None = None
+    year: int = 1  # year of the rotation cycle; the plan has 12 x n_years entries
+    water_deficit_mm: float | None = None  # rainfed only: ETc - effective rain (irrigation fields are None)
+
+
+class RevenueCrop(BaseModel):
+    crop: str
+    label: str
+    year: int = 1
+    yield_t_per_ha: float | None
+    price_per_t: float | None
+    revenue_per_ha: float | None
+    revenue_per_feddan: float | None
+    revenue_for_area: float | None = None
+    yield_basis: str | None = None
+    price_basis: str | None = None
+    note: str | None = None
+    missing: list[str]
+
+
+class Revenue(BaseModel):
+    """Indicative gross revenue (yield x price, no costs). Not a score unless scored is true."""
+
+    available: bool  # False when the region has no market table
+    complete: bool  # True only if every crop has a yield and a price
+    scored: bool  # True only where revenue is a priority (pack market table complete)
+    currency: str | None
+    price_snapshot: str | None
+    status: str | None = None
+    per_crop: list[RevenueCrop]
+    missing: list[dict]  # [{crop, label, missing: ["yield" | "price"]}]
+    n_years: int | None = None
+    total_per_ha: float | None  # whole rotation cycle
+    total_per_feddan: float | None
+    total_for_area: float | None = None
+    annual_per_ha: float | None = None  # cycle total / n_years
+    annual_per_feddan: float | None = None
+    annual_for_area: float | None = None
+    area: Area | None = None
+    revenue_change_pct: float | None = None  # annual, versus the current rotation; both must be complete
+    notes: list[str]
 
 
 class RotationResult(BaseModel):
@@ -162,12 +211,17 @@ class RotationResult(BaseModel):
     water_saving_m3: float | None = None  # only when an area is given
     exceeds_water_budget: bool | None = None  # only when scenario.water_cut_pct > 0
     water_budget_mm: float | None = None
+    n_years: int = 1  # length of the rotation cycle; water and revenue figures are annual means
+    water_deficit_mm: float | None = None  # rainfed: ETc - effective rain per year (crop water-stress risk)
+    water_deficit_reduction_pct: float | None = None  # rainfed: % less deficit than the current rotation
+    water_criterion_label: str | None = None  # "irrigation water saving" or "water-deficit exposure"
     why: str
     not_assessed: str
     confidence: Literal["low", "medium", "high"]
     caveats: list[str]
     suitability: list[CropSuitability]
     year_plan: list[YearPlanMonth]
+    revenue: Revenue | None = None
 
 
 class SensitivityCase(BaseModel):
@@ -188,9 +242,13 @@ class RankedOption(BaseModel):
     is_current: bool
     water_mm_per_year: float | None
     water_saving_pct: float | None
+    water_deficit_mm: float | None = None
+    water_deficit_reduction_pct: float | None = None
+    n_years: int = 1
     scores: Scores
     total: float
     rank: int
+    revenue: Revenue | None = None
 
 
 class NdviCropCheck(BaseModel):
@@ -240,6 +298,31 @@ class RunInfo(BaseModel):
     note: str
 
 
+class FieldHistoryYear(BaseModel):
+    year: int
+    cdl_value: int
+    cdl_category: str  # as returned by CropScape
+    legend_name: str | None  # official NASS legend name
+    kind: Literal["crop", "fallow", "non_crop", "other_crop"]
+    crops: list[str] | None  # Field Shift crop ids ([] for fallow, None if not modelled)
+
+
+class FieldHistory(BaseModel):
+    status: Literal["detected", "not_detected", "not_cropland", "not_available", "unavailable"]
+    lat: float
+    lon: float
+    yearly: list[FieldHistoryYear]
+    rotation: list[str] | None  # flat, "fallow" for a year without a crop, e.g. ["wheat", "sorghum", "fallow"]
+    cycle: list[list[str]] | None  # per year of the cycle; [] = fallow year
+    n_years: int | None
+    confidence: Literal["high", "medium", "low", "none"]
+    confidence_note: str
+    matched_pack_rotation: str | None
+    source: str | None
+    resolution_note: str | None = None
+    is_cached: bool | None = None
+
+
 class CompareResponse(BaseModel):
     location: LocationInfo
     climate: ClimateInfo
@@ -257,3 +340,5 @@ class CompareResponse(BaseModel):
     warnings: list[str]
     assumptions: list[str]
     run_info: RunInfo
+    current_rotation_source: Literal["farmer", "cdl_detected"] = "farmer"
+    field_history: FieldHistory | None = None  # only when the rotation was detected from the CDL

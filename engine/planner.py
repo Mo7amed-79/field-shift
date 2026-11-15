@@ -4,11 +4,12 @@
 Input:  a rotation with "crops" ({"crop", "label", "start_month", "end_month",
         "months"}) and its "water" block (water_balance.rotation_water_need),
         the monthly climatology, and optionally the field area.
-Output: 12 dicts (January to December): month, crop, activity
+Output: (build_year_plan) 12 dicts (January to December): month, crop, activity
         (plant/grow/harvest/fallow), kc (month-average crop coefficient; in a
         shared transition month the ETc/ET0 mix of both crops), etc_mm,
         rain_mm, irrigation_mm, irrigation_m3 (None without area) and an
-        optional note.
+        optional note. build_cycle_plan repeats this for every year of an
+        N-year rotation (12 x N entries, each with "year").
 """
 
 from engine.scoring import mm_to_m3
@@ -20,6 +21,29 @@ def _activity(month: int, c: dict) -> str:
     if month == c["end_month"]:
         return "harvest"
     return "grow"
+
+
+def build_cycle_plan(rotation: dict, climate_summary: dict, area: dict | None = None,
+                     rainfed: bool = False) -> list[dict]:
+    """12 x n_years months: ``build_year_plan`` for each year of the cycle, each entry with "year".
+
+    ``rotation["water"]`` must come from water_balance.rotation_water_need_cycle. When ``rainfed``,
+    the monthly ETc - effective rain is reported as "water_deficit_mm" and irrigation fields are None.
+    """
+    plan = []
+    for yw in rotation["water"]["per_year"]:
+        y = yw["year"]
+        sub = {**rotation, "crops": [c for c in rotation["crops"] if c.get("year", 1) == y], "water": yw}
+        for entry in build_year_plan(sub, climate_summary, None if rainfed else area):
+            entry["year"] = y
+            if rainfed:
+                entry["water_deficit_mm"] = entry["irrigation_mm"]
+                entry["irrigation_mm"] = None
+                entry["irrigation_m3"] = None
+            else:
+                entry["water_deficit_mm"] = None
+            plan.append(entry)
+    return plan
 
 
 def build_year_plan(rotation: dict, climate_summary: dict, area: dict | None = None) -> list[dict]:

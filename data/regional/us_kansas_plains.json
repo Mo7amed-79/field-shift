@@ -1,0 +1,115 @@
+{
+  "id": "us_kansas_plains",
+  "name": "United States — Kansas (Great Plains)",
+  "country": "United States",
+  "bbox": {
+    "lat_min": 37.0,
+    "lat_max": 40.0,
+    "lon_min": -102.0,
+    "lon_max": -94.6
+  },
+  "water_access_default": "rainfed",
+  "_note": "Months are inclusive. Each crop entry has a 'year' in the rotation cycle (1..n_years); a year without crops is a fallow year. All entries are provisional (supplied by the team from memory) until a researcher confirms them.",
+  "crop_calendar": [
+    {
+      "crop": "wheat",
+      "start_month": 10,
+      "end_month": 6,
+      "status": "provisional — unverified",
+      "source": "TODO"
+    },
+    {
+      "crop": "sorghum",
+      "start_month": 6,
+      "end_month": 10,
+      "status": "provisional — unverified",
+      "source": "TODO"
+    },
+    {
+      "crop": "soybean",
+      "start_month": 6,
+      "end_month": 10,
+      "status": "provisional — unverified",
+      "source": "TODO"
+    }
+  ],
+  "typical_rotations": [
+    {
+      "id": "wheat_fallow",
+      "name": "Wheat → Fallow",
+      "n_years": 2,
+      "crops": [
+        {
+          "crop": "wheat",
+          "label": "Wheat",
+          "start_month": 10,
+          "end_month": 6,
+          "year": 1
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO"
+    },
+    {
+      "id": "wheat_sorghum_fallow",
+      "name": "Wheat → Sorghum → Fallow",
+      "n_years": 3,
+      "crops": [
+        {
+          "crop": "wheat",
+          "label": "Wheat",
+          "start_month": 10,
+          "end_month": 6,
+          "year": 1
+        },
+        {
+          "crop": "sorghum",
+          "label": "Sorghum",
+          "start_month": 6,
+          "end_month": 10,
+          "year": 2
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO"
+    },
+    {
+      "id": "wheat_double_crop_soybean",
+      "name": "Wheat + double-crop soybean",
+      "crops": [
+        {
+          "crop": "wheat",
+          "label": "Wheat",
+          "start_month": 10,
+          "end_month": 6,
+          "year": 1
+        },
+        {
+          "crop": "soybean",
+          "label": "Double-crop soybean",
+          "start_month": 6,
+          "end_month": 10,
+          "year": 1
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO"
+    },
+    {
+      "id": "continuous_wheat",
+      "name": "Continuous wheat",
+      "crops": [
+        {
+          "crop": "wheat",
+          "label": "Wheat",
+          "start_month": 10,
+          "end_month": 6,
+          "year": 1
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO"
+    }
+  ],
+  "paddy_extra_water_mm": null
+}
