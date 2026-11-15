@@ -227,6 +227,8 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
                 f"{pack.get('water_access_default')!r}; its calendar and rotations may not fit your situation."
             )
 
+    if not exploratory:
+        kc_table = water_balance.apply_pack_overrides(kc_table, pack)
     for rot in candidates:
         _enrich(rot, clim_now, clim_scen, crops_by_id, kc_table, water_access, soil_ph, exploratory,
                 None if exploratory else pack.get("paddy_extra_water_mm"))
@@ -249,6 +251,7 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
                 "water_mm_per_year": r["water_mm_per_year"], "water_saving_pct": r["water_saving_pct"],
                 "water_deficit_mm": r["water_deficit_mm"],
                 "water_deficit_reduction_pct": r["water_deficit_reduction_pct"],
+                "water_unmet_fraction": r["water_unmet_fraction"],
                 "n_years": r["water"]["n_years"],
                 "scores": r["scores"], "total": r["total"], "rank": i, "revenue": r["revenue"],
             }
@@ -281,14 +284,26 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
              "etc_mm": round(p["seasonal"]["etc_mm"], 1), "kc_status": p["kc_status"]}
             for p in r["water"]["per_crop"] if p["water_assessed"]
         ]
+        if water_access == "rainfed":
+            for entry in r["score_details"]["water"]["per_crop"]:
+                etc = entry["etc_mm"]
+                entry["unmet_fraction"] = round(entry[key] / etc, 3) if etc > 0 else 0.0
+        if scoring.has_fallow_year(r) and scoring.FALLOW_MOISTURE_NOTE not in r["caveats"]:
+            r["caveats"].append(scoring.FALLOW_MOISTURE_NOTE)
         r["windows"] = r["crops"]
         r["crops"] = [c["crop"] for c in r["windows"]]
 
     if clim_now.get("rain_record_warning"):
         warnings.append(clim_now["rain_record_warning"])
-    assumptions = list(water_balance.ASSUMPTIONS) + [
+    water_assumption = (
+        "Water score (rainfed) = clip(50 + 100 x (unmet fraction of your current rotation - this rotation's), "
+        "0, 100), where a crop's unmet fraction = water deficit / crop water demand (ETc) and a rotation's is "
+        "the mean over its crop seasons; your current rotation scores 50. The deficit in mm is shown for "
+        "information only." if water_access == "rainfed" else
         "Water score = clip(50 + % irrigation saved versus your current rotation, 0, 100): your current "
-        "rotation scores 50 and a 25% saving scores 75.",
+        "rotation scores 50 and a 25% saving scores 75.")
+    assumptions = list(water_balance.ASSUMPTIONS) + [
+        water_assumption,
         scoring.HEAT_LABEL.capitalize() + ": " + scoring.HEAT_NOTE,
         "Soil-health practices (proxy) = legume in rotation (40) + plant-family diversity (30) + months with "
         "ground cover (30); it counts practices and is not a measured soil outcome.",
@@ -303,6 +318,12 @@ def run_compare(raw: dict, soil: dict | None, request: dict, crops: list[dict], 
             "Indicative gross revenue = national average yield x " + market.basis_text(market_table).split(",")[0]
             + "; it is shown for information only and is not part of the scores."
         )
+    if any(scoring.has_fallow_year(r) for r in candidates):
+        assumptions.append(scoring.FALLOW_MOISTURE_NOTE)
+    if any(e.get("stage_fractions") for e in (pack or {}).get("crop_calendar", [])):
+        assumptions.append(
+            "Some crops use pack-specific FAO-56 stage lengths (e.g. autumn-sown winter wheat, so peak water "
+            "use falls in spring); these are provisional.")
     if request.get("soil_texture"):
         assumptions.append("The soil texture you entered is recorded but not yet used in the scores.")
 

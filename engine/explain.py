@@ -27,18 +27,38 @@ def _per_year(r: dict) -> str:
     return " (mean over the cycle)" if r.get("n_years", 1) > 1 else ""
 
 
+def _crop_label(r: dict, crop: str, year: int) -> str:
+    for c in r["crops"]:
+        if isinstance(c, dict) and c["crop"] == crop and c.get("year", 1) == year:
+            return c.get("label", crop)
+    return crop
+
+
 def _deficit_sentence(r: dict, current: dict) -> str:
+    """Rainfed: how much of each crop's water demand rain covers; the deficit in mm as information."""
+    per_crop, unmet = r.get("water_unmet_per_crop") or [], r.get("water_unmet_fraction")
+    if unmet is None or not per_crop:
+        return "Its water stress could not be estimated (a crop has no Kc values)."
+    covers = [f"{100 * p['rain_cover_fraction']:.0f}% of {_crop_label(r, p['crop'], p['year']).lower()}'s"
+              for p in per_crop]
+    if len(covers) == 1:
+        text = f"Rainfed: rain covers about {covers[0]} water demand"
+    else:
+        text = (f"Rainfed: rain covers about {', '.join(covers[:-1])} and {covers[-1]} water demand "
+                f"(on average {100 * (1 - unmet):.0f}%)")
+    base = current.get("water_unmet_fraction")
+    if r is not current and base is not None:
+        diff = 100 * (base - unmet)
+        if abs(diff) < 1:
+            text += ", about the same as your current rotation"
+        else:
+            text += (f", {abs(diff):.0f} percentage points {'more' if diff > 0 else 'less'} than your current "
+                     f"rotation ({100 * (1 - base):.0f}%)")
     d = r.get("water_deficit_mm")
-    if d is None:
-        return "Its water deficit could not be estimated (a crop has no Kc values)."
-    text = (f"Rainfed: its crops face a water deficit of about {d:.0f} mm per year{_per_year(r)}, "
-            "i.e. crop water use not met by effective rain, an indicator of drought-stress risk")
-    pct = r.get("water_deficit_reduction_pct")
-    if r is current or pct is None:
-        return text + "."
-    if abs(pct) < 1:
-        return text + ", about the same as your current rotation."
-    return text + f", {abs(pct):.0f}% {'less' if pct > 0 else 'more'} than your current rotation."
+    if d is not None:
+        text += (f". The unmet part, about {d:.0f} mm per year{_per_year(r)}, indicates drought-stress risk "
+                 "(shown for information; the score uses the share, not the millimetres)")
+    return text + "."
 
 
 def _water_sentence(r: dict, current: dict) -> str:
@@ -107,9 +127,9 @@ def _gains(best: dict, current: dict) -> str:
     pct = best.get("water_saving_pct")
     if pct is not None and pct >= 1:
         gains.append(f"{pct:.0f}% less irrigation")
-    dpct = best.get("water_deficit_reduction_pct")
-    if dpct is not None and dpct >= 1:
-        gains.append(f"{dpct:.0f}% less water deficit (drought-stress risk)")
+    u_best, u_cur = best.get("water_unmet_fraction"), current.get("water_unmet_fraction")
+    if u_best is not None and u_cur is not None and 100 * (u_cur - u_best) >= 1:
+        gains.append(f"{100 * (u_cur - u_best):.0f} percentage points more of crop water demand covered by rain")
     for k in ("soil_practices", "heat_risk"):
         a, b = best["scores"][k], current["scores"][k]
         if a is not None and b is not None and a - b >= 1:
@@ -139,12 +159,13 @@ def revenue_sentence(r: dict, current: dict, basis: str | None) -> str | None:
     elif rev["complete"] and base["complete"]:
         change = rev["revenue_change_pct"]
         if _rainfed(r):
-            pct = r.get("water_deficit_reduction_pct")
+            u, ub = r.get("water_unmet_fraction"), current.get("water_unmet_fraction")
+            pct = None if u is None or ub is None else 100 * (ub - u)
             if pct is None or abs(pct) < 1:
-                water = "has about the same water deficit"
+                water = "has about the same share of crop water demand covered by rain"
             else:
-                water = (f"has {abs(pct):.0f}% less water deficit (drought-stress risk)" if pct > 0
-                         else f"has {abs(pct):.0f}% more water deficit (drought-stress risk)")
+                water = (f"has {abs(pct):.0f} percentage points {'more' if pct > 0 else 'less'} of its crop water "
+                         "demand covered by rain")
         else:
             pct = r.get("water_saving_pct")
             if pct is None or abs(pct) < 1:

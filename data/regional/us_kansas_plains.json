@@ -16,7 +16,16 @@
       "start_month": 10,
       "end_month": 6,
       "status": "provisional — unverified",
-      "source": "TODO"
+      "source": "TODO",
+      "stage_fractions": {
+        "initial": 0.48,
+        "development": 0.22,
+        "mid": 0.22,
+        "late": 0.08,
+        "status": "provisional — from memory of FAO-56 Table 11 winter wheat, October planting; verify",
+        "source": "TODO",
+        "_note": "Autumn-sown winter wheat in a rainfed pack with a cold winter: the long initial stage covers winter dormancy, so peak water use falls in spring (Apr-Jun), not mid-winter."
+      }
     },
     {
       "crop": "sorghum",
