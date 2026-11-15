@@ -1,0 +1,160 @@
+{
+  "id": "india_punjab",
+  "name": "India — Punjab",
+  "bbox": {
+    "lat_min": 29.5,
+    "lat_max": 32.5,
+    "lon_min": 73.9,
+    "lon_max": 76.9
+  },
+  "water_access_default": "full_irrigation",
+  "_note": "Months are inclusive. crop_calendar repeats the windows used in typical_rotations. All entries are provisional until a researcher confirms them.",
+  "crop_calendar": [
+    {
+      "crop": "rice",
+      "start_month": 6,
+      "end_month": 10,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    },
+    {
+      "crop": "maize",
+      "start_month": 6,
+      "end_month": 10,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    },
+    {
+      "crop": "upland_cotton",
+      "start_month": 5,
+      "end_month": 10,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    },
+    {
+      "crop": "wheat",
+      "start_month": 11,
+      "end_month": 4,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    },
+    {
+      "crop": "chickpea",
+      "start_month": 11,
+      "end_month": 3,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    },
+    {
+      "crop": "rapeseed",
+      "start_month": 11,
+      "end_month": 3,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    }
+  ],
+  "typical_rotations": [
+    {
+      "id": "rice_wheat",
+      "name": "Rice → Wheat",
+      "crops": [
+        {
+          "crop": "rice",
+          "label": "Rice",
+          "start_month": 6,
+          "end_month": 10
+        },
+        {
+          "crop": "wheat",
+          "label": "Wheat",
+          "start_month": 11,
+          "end_month": 4
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    },
+    {
+      "id": "maize_wheat",
+      "name": "Maize → Wheat",
+      "crops": [
+        {
+          "crop": "maize",
+          "label": "Maize",
+          "start_month": 6,
+          "end_month": 10
+        },
+        {
+          "crop": "wheat",
+          "label": "Wheat",
+          "start_month": 11,
+          "end_month": 4
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    },
+    {
+      "id": "upland_cotton_wheat",
+      "name": "Upland cotton → Wheat",
+      "crops": [
+        {
+          "crop": "upland_cotton",
+          "label": "Upland cotton",
+          "start_month": 5,
+          "end_month": 10
+        },
+        {
+          "crop": "wheat",
+          "label": "Wheat",
+          "start_month": 11,
+          "end_month": 4
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    },
+    {
+      "id": "maize_chickpea",
+      "name": "Maize → Chickpea",
+      "crops": [
+        {
+          "crop": "maize",
+          "label": "Maize",
+          "start_month": 6,
+          "end_month": 10
+        },
+        {
+          "crop": "chickpea",
+          "label": "Chickpea",
+          "start_month": 11,
+          "end_month": 3
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    },
+    {
+      "id": "maize_rapeseed",
+      "name": "Maize → Rapeseed",
+      "crops": [
+        {
+          "crop": "maize",
+          "label": "Maize",
+          "start_month": 6,
+          "end_month": 10
+        },
+        {
+          "crop": "rapeseed",
+          "label": "Rapeseed",
+          "start_month": 11,
+          "end_month": 3
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    }
+  ],
+  "paddy_extra_water_mm": null,
+  "paddy_extra_water_source": "TODO — researcher to add a local estimate of water for rice land preparation, percolation and seepage (mm per season)"
+}

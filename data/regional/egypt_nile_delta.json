@@ -1,0 +1,290 @@
+{
+  "id": "egypt_nile_delta",
+  "name": "Egypt — Nile Delta",
+  "bbox": {
+    "lat_min": 30.0,
+    "lat_max": 31.6,
+    "lon_min": 29.8,
+    "lon_max": 32.4
+  },
+  "water_access_default": "full_irrigation",
+  "_note": "Months are inclusive. A harvest month shared with the next crop's sowing month is allowed in pack rotations and not penalised. All entries are provisional until a researcher confirms them.",
+  "crop_calendar": [
+    {
+      "crop": "wheat",
+      "start_month": 11,
+      "end_month": 5,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm against FAO Crop Calendar / Egyptian Ministry of Agriculture"
+    },
+    {
+      "crop": "berseem",
+      "start_month": 10,
+      "end_month": 5,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm against FAO Crop Calendar / Egyptian Ministry of Agriculture"
+    },
+    {
+      "crop": "faba_bean",
+      "start_month": 11,
+      "end_month": 4,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm against FAO Crop Calendar / Egyptian Ministry of Agriculture"
+    },
+    {
+      "crop": "barley",
+      "start_month": 11,
+      "end_month": 4,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm against FAO Crop Calendar / Egyptian Ministry of Agriculture"
+    },
+    {
+      "crop": "lentil",
+      "start_month": 11,
+      "end_month": 4,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm against FAO Crop Calendar / Egyptian Ministry of Agriculture"
+    },
+    {
+      "crop": "chickpea",
+      "start_month": 11,
+      "end_month": 4,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm against FAO Crop Calendar / Egyptian Ministry of Agriculture"
+    },
+    {
+      "crop": "onion",
+      "start_month": 11,
+      "end_month": 4,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm against FAO Crop Calendar / Egyptian Ministry of Agriculture"
+    },
+    {
+      "crop": "sugar_beet",
+      "start_month": 10,
+      "end_month": 5,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm against FAO Crop Calendar / Egyptian Ministry of Agriculture"
+    },
+    {
+      "crop": "rice",
+      "start_month": 5,
+      "end_month": 10,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm against FAO Crop Calendar / Egyptian Ministry of Agriculture"
+    },
+    {
+      "crop": "maize",
+      "start_month": 5,
+      "end_month": 9,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm against FAO Crop Calendar / Egyptian Ministry of Agriculture"
+    },
+    {
+      "crop": "cotton",
+      "start_month": 3,
+      "end_month": 10,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm against FAO Crop Calendar / Egyptian Ministry of Agriculture"
+    },
+    {
+      "crop": "sorghum",
+      "start_month": 5,
+      "end_month": 9,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm against FAO Crop Calendar / Egyptian Ministry of Agriculture"
+    },
+    {
+      "crop": "soybean",
+      "start_month": 5,
+      "end_month": 9,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm against FAO Crop Calendar / Egyptian Ministry of Agriculture"
+    },
+    {
+      "crop": "groundnut",
+      "start_month": 5,
+      "end_month": 9,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm against FAO Crop Calendar / Egyptian Ministry of Agriculture"
+    },
+    {
+      "crop": "sesame",
+      "start_month": 5,
+      "end_month": 8,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm against FAO Crop Calendar / Egyptian Ministry of Agriculture"
+    },
+    {
+      "crop": "sunflower",
+      "start_month": 5,
+      "end_month": 8,
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm against FAO Crop Calendar / Egyptian Ministry of Agriculture"
+    }
+  ],
+  "typical_rotations": [
+    {
+      "id": "rice_wheat",
+      "name": "Rice → Wheat",
+      "crops": [
+        {
+          "crop": "rice",
+          "label": "Rice",
+          "start_month": 5,
+          "end_month": 10
+        },
+        {
+          "crop": "wheat",
+          "label": "Wheat",
+          "start_month": 11,
+          "end_month": 5
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    },
+    {
+      "id": "rice_berseem",
+      "name": "Rice → Berseem",
+      "crops": [
+        {
+          "crop": "rice",
+          "label": "Rice",
+          "start_month": 5,
+          "end_month": 10
+        },
+        {
+          "crop": "berseem",
+          "label": "Berseem",
+          "start_month": 11,
+          "end_month": 5
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    },
+    {
+      "id": "rice_faba_bean",
+      "name": "Rice → Faba bean",
+      "crops": [
+        {
+          "crop": "rice",
+          "label": "Rice",
+          "start_month": 5,
+          "end_month": 10
+        },
+        {
+          "crop": "faba_bean",
+          "label": "Faba bean",
+          "start_month": 11,
+          "end_month": 4
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    },
+    {
+      "id": "maize_wheat",
+      "name": "Maize → Wheat",
+      "crops": [
+        {
+          "crop": "maize",
+          "label": "Maize",
+          "start_month": 5,
+          "end_month": 9
+        },
+        {
+          "crop": "wheat",
+          "label": "Wheat",
+          "start_month": 11,
+          "end_month": 5
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    },
+    {
+      "id": "maize_berseem",
+      "name": "Maize → Berseem",
+      "crops": [
+        {
+          "crop": "maize",
+          "label": "Maize",
+          "start_month": 5,
+          "end_month": 9
+        },
+        {
+          "crop": "berseem",
+          "label": "Berseem",
+          "start_month": 10,
+          "end_month": 5
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    },
+    {
+      "id": "maize_faba_bean",
+      "name": "Maize → Faba bean",
+      "crops": [
+        {
+          "crop": "maize",
+          "label": "Maize",
+          "start_month": 5,
+          "end_month": 9
+        },
+        {
+          "crop": "faba_bean",
+          "label": "Faba bean",
+          "start_month": 11,
+          "end_month": 4
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    },
+    {
+      "id": "soybean_wheat",
+      "name": "Soybean → Wheat",
+      "crops": [
+        {
+          "crop": "soybean",
+          "label": "Soybean",
+          "start_month": 5,
+          "end_month": 9
+        },
+        {
+          "crop": "wheat",
+          "label": "Wheat",
+          "start_month": 11,
+          "end_month": 5
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    },
+    {
+      "id": "cotton_short_berseem",
+      "name": "Cotton → Short berseem",
+      "crops": [
+        {
+          "crop": "cotton",
+          "label": "Cotton",
+          "start_month": 3,
+          "end_month": 10
+        },
+        {
+          "crop": "berseem",
+          "label": "Short berseem",
+          "start_month": 11,
+          "end_month": 2
+        }
+      ],
+      "status": "provisional — unverified",
+      "source": "TODO — researcher to confirm"
+    }
+  ],
+  "paddy_extra_water_mm": null,
+  "paddy_extra_water_source": "TODO — researcher to add a local estimate of water for rice land preparation, percolation and seepage (mm per season)"
+}

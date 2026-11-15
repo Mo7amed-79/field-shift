@@ -1,0 +1,67 @@
+{
+  "_note": "Rules used by engine/rotation_builder.py. Soft-rule weights and suitability_weight are initial placeholders for the team to tune.",
+  "suitability_weight": 0.5,
+  "rules": [
+    {
+      "id": "R1",
+      "type": "hard",
+      "description": "Crop windows in a 12-month rotation must not overlap. One shared transition month is allowed where a crop's harvest month is the next crop's sowing month (calendars are monthly).",
+      "min_gap_months": 0,
+      "source": "TODO — researcher to add reference",
+      "allow_transition_month": true
+    },
+    {
+      "id": "R1b",
+      "type": "soft",
+      "weight": 0.1,
+      "description": "Leave at least one month between consecutive crops for harvest and land preparation.",
+      "preferred_gap_months": 1,
+      "source": "TODO — researcher to add reference"
+    },
+    {
+      "id": "R2",
+      "type": "hard",
+      "description": "Every crop in the rotation must have a suitability score of at least 40 in its window.",
+      "min_score": 40,
+      "source": "TODO — researcher to add reference"
+    },
+    {
+      "id": "R3",
+      "type": "soft",
+      "weight": 0.25,
+      "description": "Include a legume in the rotation.",
+      "source": "TODO — researcher to add reference"
+    },
+    {
+      "id": "R4",
+      "type": "soft",
+      "weight": 0.2,
+      "description": "No two consecutive crops from the same botanical family.",
+      "source": "TODO — researcher to add reference"
+    },
+    {
+      "id": "R5",
+      "type": "soft",
+      "weight": 0.15,
+      "description": "A cereal is followed by a non-cereal.",
+      "source": "TODO — researcher to add reference"
+    },
+    {
+      "id": "R6",
+      "type": "soft",
+      "weight": 0.3,
+      "description": "Fewer fallow months is better.",
+      "source": "TODO — researcher to add reference"
+    },
+    {
+      "id": "R7",
+      "type": "soft",
+      "weight": 0.25,
+      "description": "Where the climate supports two seasons (a regional pack exists, or two non-overlapping windows with score >= 60), prefer a crop in both the cool and the warm season; fallow of 4 or more consecutive months is penalised.",
+      "two_season_min_score": 60,
+      "max_fallow_run_months": 3,
+      "source": "TODO — researcher to add reference"
+    }
+  ],
+  "tie_margin_points": 2
+}

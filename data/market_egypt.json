@@ -1,0 +1,92 @@
+{
+  "id": "market_egypt",
+  "country": "Egypt",
+  "currency": "EGP",
+  "price_snapshot": "February 2024 government procurement / guaranteed prices",
+  "status": "provisional — secondary source (USDA FAS Cairo), NOT FAOSTAT; FAOSTAT could not be reached when this file was built",
+  "important_caveats": [
+    "Prices are a single snapshot from February 2024, before the March 2024 devaluation of the Egyptian pound. Absolute EGP values are out of date; use them only to compare crops with each other.",
+    "These are government procurement or guaranteed minimum prices, not prices observed on a specific farm.",
+    "Yields are national averages, not the yield of the farmer's field.",
+    "Revenue = yield x price. It is gross revenue, not profit: no production costs are included.",
+    "No price is available for berseem (a forage crop, usually fed on-farm or sold locally) or faba bean. Rotations containing them cannot be given a complete revenue figure."
+  ],
+  "unit_conversions": {
+    "feddan_to_hectare": 0.42,
+    "ardeb_wheat_kg": 150
+  },
+  "crops": {
+    "wheat": {
+      "yield_t_per_ha": 6.5714,
+      "yield_source": "USDA FAS Cairo, Grain and Feed Update EG2024-0023 (25 Sep 2024), Post estimate MY2024/25",
+      "price_egp_per_t": 8333,
+      "price_usd_per_t": 254.82,
+      "price_source": "USDA FAS Cairo, Sugar Annual EG2024-0011, table 'Government Procurement Prices Announced in February 2024'",
+      "note": "Procurement price was raised to 1,900-2,000 EGP/ardeb on 14 Mar 2024 (EG2024-0023)."
+    },
+    "maize": {
+      "yield_t_per_ha": 7.6087,
+      "yield_source": "USDA FAS Cairo, Grain and Feed Update EG2024-0023, Post estimate MY2024/25",
+      "price_egp_per_t": 9000,
+      "price_usd_per_t": 294.31,
+      "price_source": "USDA FAS Cairo, Sugar Annual EG2024-0011, same table (white corn; yellow corn is 9,500 EGP/t)",
+      "note": "White corn price used. Yellow corn: 9,500 EGP/t."
+    },
+    "rice": {
+      "yield_t_per_ha": 5.8209,
+      "yield_basis": "milled-equivalent (3.9 MMT milled / 670,000 ha); rough (paddy) yield is 8.4358 t/ha",
+      "yield_source": "USDA FAS Cairo, Grain and Feed Update EG2024-0023, Post estimate MY2024/25",
+      "price_egp_per_t": 27000,
+      "price_usd_per_t": 825.66,
+      "price_basis": "milled rice, market-based (the government does not set a rice procurement price)",
+      "price_source": "USDA FAS Cairo, Sugar Annual EG2024-0011, same table",
+      "note": "Farmers sell paddy, not milled rice, so milled yield x milled price overstates farm revenue (it includes the milling margin). Treat as an upper bound. The source table's own per-hectare figure multiplies paddy yield by the milled price and is higher still; it is not used here."
+    },
+    "soybean": {
+      "yield_t_per_ha": 2.8333,
+      "yield_source": "USDA FAS Cairo, Oilseeds and Products Annual EG2024-0008 (4 Apr 2024)",
+      "price_egp_per_t": 18000,
+      "price_usd_per_t": 550.44,
+      "price_source": "USDA FAS Cairo, Sugar Annual EG2024-0011, same table"
+    },
+    "sunflower": {
+      "yield_t_per_ha": 2.5,
+      "yield_source": "implied by the same table (37,500 EGP/ha / 15,000 EGP/t)",
+      "price_egp_per_t": 15000,
+      "price_usd_per_t": 458.70,
+      "price_source": "USDA FAS Cairo, Sugar Annual EG2024-0011, same table"
+    },
+    "cotton": {
+      "yield_t_per_ha": 1.443,
+      "yield_source": "implied by the same table (288,600 EGP/ha / 200,000 EGP/t)",
+      "price_egp_per_t": 200000,
+      "price_usd_per_t": 6116,
+      "price_source": "USDA FAS Cairo, Sugar Annual EG2024-0011, same table (Upper Egypt cotton)",
+      "note": "Upper Egypt cotton price; Delta (long-staple) prices differ. Season-ending prices in MY2023/24 ranged widely by governorate."
+    },
+    "sugar_beet": {
+      "yield_t_per_ha": null,
+      "price_egp_per_t": 1500,
+      "price_source": "USDA FAS Cairo, Sugar Annual EG2024-0011, same table",
+      "note": "The source row is internally inconsistent (per-hectare and per-ton figures imply an implausible yield and a different exchange rate). Do not compute revenue until a yield is sourced. Later announcements put the price at 2,300-2,400 EGP/t."
+    },
+    "faba_bean": {
+      "yield_t_per_ha": 3.4,
+      "yield_source": "secondary summaries citing FAO data (about 3.4-3.5 t/ha); verify",
+      "price_egp_per_t": null,
+      "note": "No sourced farm price found."
+    },
+    "berseem": {
+      "yield_t_per_ha": null,
+      "price_egp_per_t": null,
+      "note": "Forage crop; no market price in the sources used. Its value is mostly as livestock feed."
+    }
+  },
+  "source_urls": {
+    "EG2024-0011": "https://apps.fas.usda.gov/newgainapi/api/Report/DownloadReportByFileName?fileName=Sugar+Annual_Cairo_Egypt_EG2024-0011.pdf",
+    "EG2024-0023": "https://apps.fas.usda.gov/newgainapi/api/Report/DownloadReportByFileName?fileName=Grain+and+Feed+Update_Cairo_Egypt_EG2024-0023",
+    "EG2024-0008": "https://www.oilworld.ru/data/postfiles/347868/Oilseeds_and_Products_Egypt_2024-0008.pdf",
+    "FAOSTAT_to_replace_with": "https://www.fao.org/faostat/en/#data/PP and https://www.fao.org/faostat/en/#data/QCL"
+  },
+  "accessed": "2026-11-14"
+}

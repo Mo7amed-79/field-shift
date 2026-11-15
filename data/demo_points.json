@@ -1,0 +1,35 @@
+{
+  "_note": "Demo points on farmland (SoilGrids has no data for built-up areas). Used by scripts/precache_demo.py and scripts/demo_report.py.",
+  "points": [
+    {
+      "label": "near Tanta",
+      "lat": 30.85,
+      "lon": 31.05,
+      "water_access": "full_irrigation"
+    },
+    {
+      "label": "near Kafr El-Sheikh",
+      "lat": 31.15,
+      "lon": 30.85,
+      "water_access": "full_irrigation"
+    },
+    {
+      "label": "near Mansoura",
+      "lat": 31.0,
+      "lon": 31.45,
+      "water_access": "full_irrigation"
+    },
+    {
+      "label": "near Damanhur",
+      "lat": 31.1,
+      "lon": 30.4,
+      "water_access": "full_irrigation"
+    },
+    {
+      "label": "near Ludhiana (Punjab, India)",
+      "lat": 30.8,
+      "lon": 75.6,
+      "water_access": "full_irrigation"
+    }
+  ]
+}

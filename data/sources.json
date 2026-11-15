@@ -1,0 +1,70 @@
+{
+  "ai_disclosure": "This project used AI (SI) tools: code was generated and refactored with Claude (Anthropic) via Claude Code, and Claude chat supported research and planning. All AI output was reviewed and tested by the Field Shift team. See AI_USAGE.md.",
+  "sources": [
+    {
+      "name": "NASA POWER (Prediction Of Worldwide Energy Resources)",
+      "url": "https://power.larc.nasa.gov/",
+      "what_we_use": "Monthly point data for the selected location (T2M, T2M_MAX, T2M_MIN, T2M_RANGE, RH2M, WS2M, ALLSKY_SFC_SW_DWN, PRECTOTCORR): climatology and FAO-56 reference evapotranspiration (ET0).",
+      "license": "TODO verify",
+      "accessed": "2026-11-14",
+      "non_nasa": false
+    },
+    {
+      "name": "MODIS MOD13Q1 (Terra Vegetation Indices 16-Day L3 Global 250 m SIN Grid) via ORNL DAAC TESViS",
+      "product": "MOD13Q1",
+      "band": "250m_16_days_NDVI (scale factor 0.0001, fill value -3000, valid range -2000 to 10000, as reported by the API's /MOD13Q1/bands)",
+      "version": "TODO verify — the API does not state the collection in its responses; the TESViS documentation's example filenames show collection 006",
+      "url": "https://modis.ornl.gov/rst/api/v1/",
+      "access_method": "TESViS RESTful Web Service: /MOD13Q1/bands, /MOD13Q1/dates, /MOD13Q1/subset with kmAboveBelow=0 and kmLeftRight=0 (single 250 m pixel), at most ten MODIS dates per request (per the service documentation), one band per request.",
+      "what_we_use": "16-day NDVI at the clicked pixel for the last three full years, to show greenness seasons as supporting evidence next to the crop calendar. Not used in any score.",
+      "citation": "ORNL DAAC. 2018. Terrestrial Ecology Subsetting & Visualization Services (TESViS) RESTful Web Service. ORNL DAAC, Oak Ridge, Tennessee, USA. https://doi.org/10.3334/ORNLDAAC/1600",
+      "citation_source": "https://modis.ornl.gov/data/modis_webservice.html (Tool Citation); https://modis.ornl.gov/citation.html asks to cite both the tool and the data product",
+      "product_citation": "TODO — add the MOD13Q1 product citation",
+      "license": "TODO verify",
+      "accessed": "2026-11-15",
+      "non_nasa": false
+    },
+    {
+      "name": "ISRIC SoilGrids v2.0",
+      "url": "https://rest.isric.org/soilgrids/v2.0/properties/query",
+      "what_we_use": "Topsoil clay/sand/silt %, pH and organic carbon at the selected point.",
+      "license": "TODO verify",
+      "accessed": "2026-11-14",
+      "non_nasa": true
+    },
+    {
+      "name": "FAO ECOCROP",
+      "url": "https://github.com/OpenCLIM/ecocrop/blob/main/EcoCrop_DB.csv",
+      "original_source_url": "https://gaez.fao.org/pages/ecocrop",
+      "retrieved_from": "OpenCLIM/ecocrop GitHub repository, commit f13577f4237604b15d85d8e43741714a2d1eb2d4 (2026-01-30)",
+      "files": [
+        "data/raw/EcoCrop_DB.csv",
+        "data/raw/Ecocrop_variable_lookup.csv"
+      ],
+      "what_we_use": "Crop requirement envelopes (temperature, rainfall, pH, killing temperature, cycle length) and botanical family for data/crops.json, built by scripts/build_crops.py.",
+      "origin_per_repo": "OpenCLIM/ecocrop README: \"The full FAO EcoCrop database (https://gaez.fao.org/pages/ecocrop) is provided as EcoCrop_DB.csv.\"",
+      "license_per_repo": "The repository has no LICENSE file and GitHub reports no license. README 'License information': \"This code is available under the terms of the Open Government Licence\" and \"By accessing or using this dataset, you agree to the terms of the Open Government Licence\" (https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/). CITATION.cff: \"license: OGL-UK-3.0\" with \"type: software\".",
+      "license": "UNVERIFIED — team must confirm before submission",
+      "license_note": "OGL is the repository authors' (UKCEH) licence; the data originates from FAO, whose own terms for ECOCROP were not found in the repo. Check FAO's terms before submission.",
+      "citation": "Brown, M. J., Redhead, J., Pywell, R., Price, J. EcoCrop Climatic Crop Suitability Scoring. doi:10.5281/zenodo.10843625",
+      "accessed": "2026-11-14",
+      "non_nasa": true
+    },
+    {
+      "name": "FAO GAEZ (Global Agro-Ecological Zones)",
+      "url": "https://gaez.fao.org/",
+      "what_we_use": "TODO: reference for cross-checking crop suitability results.",
+      "license": "TODO verify",
+      "accessed": "2026-11-14",
+      "non_nasa": true
+    },
+    {
+      "name": "FAO Irrigation and Drainage Paper 56 (Crop Evapotranspiration)",
+      "url": "https://www.fao.org/4/x0490e/x0490e0b.htm",
+      "what_we_use": "Penman-Monteith ET0 (Ch. 2-4), crop coefficients Kc ini/mid/end (Table 12, in data/kc_fao56.json, provisional) and ETc = Kc × ET0.",
+      "license": "TODO verify",
+      "accessed": "2026-11-14",
+      "non_nasa": true
+    }
+  ]
+}

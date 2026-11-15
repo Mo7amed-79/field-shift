@@ -1,0 +1,139 @@
+{
+  "_note": "Values supplied by the team from memory of FAO-56 Table 12; not checked against the table. Do not edit without the table at hand.",
+  "stage_fractions_default": {
+    "initial": 0.15,
+    "development": 0.25,
+    "mid": 0.4,
+    "late": 0.2,
+    "status": "provisional — replace with FAO-56 Table 11 stage lengths per crop",
+    "_note": "Share of the growing window in each FAO-56 stage. A crop entry may override with its own 'stage_fractions'."
+  },
+  "crops": {
+    "wheat": {
+      "kc_ini": 0.7,
+      "kc_mid": 1.15,
+      "kc_end": 0.3,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "barley": {
+      "kc_ini": 0.3,
+      "kc_mid": 1.15,
+      "kc_end": 0.25,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "rice": {
+      "kc_ini": 1.05,
+      "kc_mid": 1.2,
+      "kc_end": 0.75,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "maize": {
+      "kc_ini": 0.3,
+      "kc_mid": 1.2,
+      "kc_end": 0.5,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "sorghum": {
+      "kc_ini": 0.3,
+      "kc_mid": 1.05,
+      "kc_end": 0.55,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "cotton": {
+      "kc_ini": 0.35,
+      "kc_mid": 1.18,
+      "kc_end": 0.6,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "upland_cotton": {
+      "kc_ini": 0.35,
+      "kc_mid": 1.18,
+      "kc_end": 0.6,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "faba_bean": {
+      "kc_ini": 0.5,
+      "kc_mid": 1.15,
+      "kc_end": 0.3,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "berseem": {
+      "kc_ini": 0.4,
+      "kc_mid": 0.9,
+      "kc_end": 0.85,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "soybean": {
+      "kc_ini": 0.5,
+      "kc_mid": 1.15,
+      "kc_end": 0.5,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "groundnut": {
+      "kc_ini": 0.4,
+      "kc_mid": 1.15,
+      "kc_end": 0.6,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "chickpea": {
+      "kc_ini": 0.4,
+      "kc_mid": 1.0,
+      "kc_end": 0.35,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "lentil": {
+      "kc_ini": 0.4,
+      "kc_mid": 1.1,
+      "kc_end": 0.3,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "rapeseed": {
+      "kc_ini": 0.35,
+      "kc_mid": 1.1,
+      "kc_end": 0.35,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "sunflower": {
+      "kc_ini": 0.35,
+      "kc_mid": 1.1,
+      "kc_end": 0.35,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "sesame": {
+      "kc_ini": 0.35,
+      "kc_mid": 1.1,
+      "kc_end": 0.25,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "sugar_beet": {
+      "kc_ini": 0.35,
+      "kc_mid": 1.2,
+      "kc_end": 0.7,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    },
+    "onion": {
+      "kc_ini": 0.7,
+      "kc_mid": 1.05,
+      "kc_end": 0.75,
+      "status": "provisional — verify against FAO-56 Table 12",
+      "source": "Allen et al. 1998, FAO Irrigation and Drainage Paper 56, Table 12, https://www.fao.org/4/x0490e/x0490e0b.htm"
+    }
+  }
+}

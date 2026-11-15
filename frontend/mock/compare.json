@@ -1,0 +1,1558 @@
+{
+  "location": {
+    "lat": 30.85,
+    "lon": 31.05,
+    "label": "Egypt — Nile Delta",
+    "soil": {
+      "source": "ISRIC SoilGrids v2.0",
+      "clay_pct": 39.6,
+      "sand_pct": 35.4,
+      "silt_pct": 24.9,
+      "ph": 7.2,
+      "organic_carbon_g_kg": 28.5,
+      "texture_class": "clay loam",
+      "is_cached": true,
+      "note": "250 m modelled estimate, not a field soil test."
+    },
+    "soil_message": null,
+    "seasons_detected": [
+      {
+        "start_month": 12,
+        "peak_month": 2,
+        "end_month": 3,
+        "peak_ndvi": 0.692,
+        "source": "MODIS MOD13Q1 NDVI (ORNL DAAC), mean annual profile"
+      },
+      {
+        "start_month": 7,
+        "peak_month": 7,
+        "end_month": 8,
+        "peak_ndvi": 0.696,
+        "source": "MODIS MOD13Q1 NDVI (ORNL DAAC), mean annual profile"
+      }
+    ],
+    "ndvi_status": "loaded"
+  },
+  "climate": {
+    "source": "NASA POWER",
+    "period": "1991–2025",
+    "fetched_at": "2026-11-14T16:41:13.621258+00:00",
+    "is_cached": true,
+    "monthly": [
+      {
+        "month": 1,
+        "rain_mm": 14.8,
+        "temp_c": 13.3,
+        "et0_mm": 66.0
+      },
+      {
+        "month": 2,
+        "rain_mm": 11.8,
+        "temp_c": 14.0,
+        "et0_mm": 75.1
+      },
+      {
+        "month": 3,
+        "rain_mm": 10.7,
+        "temp_c": 16.8,
+        "et0_mm": 119.4
+      },
+      {
+        "month": 4,
+        "rain_mm": 7.7,
+        "temp_c": 20.5,
+        "et0_mm": 160.6
+      },
+      {
+        "month": 5,
+        "rain_mm": 1.1,
+        "temp_c": 24.7,
+        "et0_mm": 212.7
+      },
+      {
+        "month": 6,
+        "rain_mm": 0.7,
+        "temp_c": 28.1,
+        "et0_mm": 235.4
+      },
+      {
+        "month": 7,
+        "rain_mm": 0.3,
+        "temp_c": 29.6,
+        "et0_mm": 242.3
+      },
+      {
+        "month": 8,
+        "rain_mm": 0.0,
+        "temp_c": 29.6,
+        "et0_mm": 220.6
+      },
+      {
+        "month": 9,
+        "rain_mm": 0.6,
+        "temp_c": 27.5,
+        "et0_mm": 181.1
+      },
+      {
+        "month": 10,
+        "rain_mm": 4.7,
+        "temp_c": 24.3,
+        "et0_mm": 138.7
+      },
+      {
+        "month": 11,
+        "rain_mm": 8.7,
+        "temp_c": 19.9,
+        "et0_mm": 93.7
+      },
+      {
+        "month": 12,
+        "rain_mm": 11.8,
+        "temp_c": 15.4,
+        "et0_mm": 70.0
+      }
+    ],
+    "forecast_next_year": null,
+    "forecast_method": null
+  },
+  "ndvi": [
+    {
+      "date": "2023-01-01",
+      "ndvi": 0.7285
+    },
+    {
+      "date": "2023-01-17",
+      "ndvi": 0.7456
+    },
+    {
+      "date": "2023-02-02",
+      "ndvi": 0.7473
+    },
+    {
+      "date": "2023-02-18",
+      "ndvi": 0.7004
+    },
+    {
+      "date": "2023-03-06",
+      "ndvi": 0.7663
+    },
+    {
+      "date": "2023-03-22",
+      "ndvi": 0.5051
+    },
+    {
+      "date": "2023-04-07",
+      "ndvi": 0.4625
+    },
+    {
+      "date": "2023-04-23",
+      "ndvi": 0.4385
+    },
+    {
+      "date": "2023-05-09",
+      "ndvi": 0.3877
+    },
+    {
+      "date": "2023-05-25",
+      "ndvi": 0.2848
+    },
+    {
+      "date": "2023-06-10",
+      "ndvi": 0.3889
+    },
+    {
+      "date": "2023-06-26",
+      "ndvi": 0.5692
+    },
+    {
+      "date": "2023-07-12",
+      "ndvi": 0.7886
+    },
+    {
+      "date": "2023-07-28",
+      "ndvi": 0.7954
+    },
+    {
+      "date": "2023-08-13",
+      "ndvi": 0.7477
+    },
+    {
+      "date": "2023-08-29",
+      "ndvi": 0.62
+    },
+    {
+      "date": "2023-09-14",
+      "ndvi": 0.4781
+    },
+    {
+      "date": "2023-09-30",
+      "ndvi": 0.3
+    },
+    {
+      "date": "2023-10-16",
+      "ndvi": 0.3668
+    },
+    {
+      "date": "2023-11-01",
+      "ndvi": 0.5207
+    },
+    {
+      "date": "2023-11-17",
+      "ndvi": 0.5076
+    },
+    {
+      "date": "2023-12-03",
+      "ndvi": 0.5223
+    },
+    {
+      "date": "2023-12-19",
+      "ndvi": 0.577
+    },
+    {
+      "date": "2024-01-01",
+      "ndvi": 0.6065
+    },
+    {
+      "date": "2024-01-17",
+      "ndvi": 0.6826
+    },
+    {
+      "date": "2024-02-02",
+      "ndvi": 0.6873
+    },
+    {
+      "date": "2024-02-18",
+      "ndvi": 0.7111
+    },
+    {
+      "date": "2024-03-05",
+      "ndvi": 0.6817
+    },
+    {
+      "date": "2024-03-21",
+      "ndvi": 0.687
+    },
+    {
+      "date": "2024-04-06",
+      "ndvi": 0.6402
+    },
+    {
+      "date": "2024-04-22",
+      "ndvi": 0.4401
+    },
+    {
+      "date": "2024-05-08",
+      "ndvi": 0.375
+    },
+    {
+      "date": "2024-05-24",
+      "ndvi": 0.3053
+    },
+    {
+      "date": "2024-06-09",
+      "ndvi": 0.3603
+    },
+    {
+      "date": "2024-06-25",
+      "ndvi": 0.5832
+    },
+    {
+      "date": "2024-07-11",
+      "ndvi": 0.7974
+    },
+    {
+      "date": "2024-07-27",
+      "ndvi": 0.7952
+    },
+    {
+      "date": "2024-08-12",
+      "ndvi": 0.8013
+    },
+    {
+      "date": "2024-08-28",
+      "ndvi": 0.6304
+    },
+    {
+      "date": "2024-09-13",
+      "ndvi": 0.5161
+    },
+    {
+      "date": "2024-09-29",
+      "ndvi": 0.3193
+    },
+    {
+      "date": "2024-10-15",
+      "ndvi": 0.3966
+    },
+    {
+      "date": "2024-10-31",
+      "ndvi": 0.3964
+    },
+    {
+      "date": "2024-11-16",
+      "ndvi": 0.5927
+    },
+    {
+      "date": "2024-12-02",
+      "ndvi": 0.6496
+    },
+    {
+      "date": "2024-12-18",
+      "ndvi": 0.5813
+    },
+    {
+      "date": "2025-01-01",
+      "ndvi": 0.7031
+    },
+    {
+      "date": "2025-01-17",
+      "ndvi": 0.625
+    },
+    {
+      "date": "2025-02-02",
+      "ndvi": 0.6543
+    },
+    {
+      "date": "2025-02-18",
+      "ndvi": 0.7336
+    },
+    {
+      "date": "2025-03-06",
+      "ndvi": 0.7537
+    },
+    {
+      "date": "2025-03-22",
+      "ndvi": 0.6665
+    },
+    {
+      "date": "2025-04-07",
+      "ndvi": 0.592
+    },
+    {
+      "date": "2025-04-23",
+      "ndvi": 0.4083
+    },
+    {
+      "date": "2025-05-09",
+      "ndvi": 0.3515
+    },
+    {
+      "date": "2025-05-25",
+      "ndvi": 0.3533
+    },
+    {
+      "date": "2025-06-10",
+      "ndvi": 0.3892
+    },
+    {
+      "date": "2025-06-26",
+      "ndvi": 0.6513
+    },
+    {
+      "date": "2025-07-12",
+      "ndvi": 0.7726
+    },
+    {
+      "date": "2025-07-28",
+      "ndvi": 0.824
+    },
+    {
+      "date": "2025-08-13",
+      "ndvi": 0.7622
+    },
+    {
+      "date": "2025-08-29",
+      "ndvi": 0.6653
+    },
+    {
+      "date": "2025-09-14",
+      "ndvi": 0.5135
+    },
+    {
+      "date": "2025-09-30",
+      "ndvi": 0.3498
+    },
+    {
+      "date": "2025-10-16",
+      "ndvi": 0.4982
+    },
+    {
+      "date": "2025-11-01",
+      "ndvi": 0.6011
+    },
+    {
+      "date": "2025-11-17",
+      "ndvi": 0.5553
+    },
+    {
+      "date": "2025-12-03",
+      "ndvi": 0.606
+    },
+    {
+      "date": "2025-12-19",
+      "ndvi": 0.6608
+    }
+  ],
+  "ndvi_status": "loaded",
+  "ndvi_check": {
+    "status": "consistent",
+    "per_crop": [
+      {
+        "crop": "rice",
+        "label": "Rice",
+        "window": "May–Oct",
+        "contains_peak": true,
+        "peak_months": [
+          7
+        ]
+      },
+      {
+        "crop": "wheat",
+        "label": "Wheat",
+        "window": "Nov–May",
+        "contains_peak": true,
+        "peak_months": [
+          2
+        ]
+      }
+    ],
+    "text": "Satellite greenness at this pixel peaks in Feb and Jul, consistent with 2 crops a year as in this rotation (Rice May–Oct; Wheat Nov–May).",
+    "warning": null,
+    "note": "NDVI shows when the pixel is green; it does not identify which crop is grown."
+  },
+  "mode": "regional_pack",
+  "pack": {
+    "id": "egypt_nile_delta",
+    "name": "Egypt — Nile Delta"
+  },
+  "priorities_used": {
+    "water": 0.333,
+    "soil": 0.333,
+    "heat_risk": 0.333
+  },
+  "scenario": {
+    "temp_delta_c": 0.0,
+    "water_cut_pct": 0.0
+  },
+  "rotations": [
+    {
+      "id": "current",
+      "name": "Rice → Wheat",
+      "crops": [
+        "rice",
+        "wheat"
+      ],
+      "windows": [
+        {
+          "crop": "rice",
+          "label": "Rice",
+          "start_month": 5,
+          "end_month": 10,
+          "months": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          "window_source": "regional pack rotation (provisional)"
+        },
+        {
+          "crop": "wheat",
+          "label": "Wheat",
+          "start_month": 11,
+          "end_month": 5,
+          "months": [
+            11,
+            12,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "window_source": "regional pack rotation (provisional)"
+        }
+      ],
+      "is_current": true,
+      "source": "regional pack",
+      "scores": {
+        "water": 50.0,
+        "soil_practices": 30.0,
+        "heat_risk": 100.0
+      },
+      "score_details": {
+        "water": {
+          "annual_irrigation_mm": 1872.4,
+          "current_rotation_mm": 1872.4,
+          "saving_mm": 0.0,
+          "saving_pct": 0.0,
+          "method": "score = clip(50 + saving %, 0, 100): your current rotation = 50, a 25% saving = 75",
+          "notes": [],
+          "per_crop": [
+            {
+              "crop": "rice",
+              "irrigation_mm": 1267.1,
+              "etc_mm": 1272.6,
+              "kc_status": "provisional — verify against FAO-56 Table 12"
+            },
+            {
+              "crop": "wheat",
+              "irrigation_mm": 605.3,
+              "etc_mm": 658.1,
+              "kc_status": "provisional — verify against FAO-56 Table 12"
+            }
+          ]
+        },
+        "soil_practices": {
+          "label": "soil-health practices (proxy)",
+          "parts": {
+            "legume_in_rotation": 0.0,
+            "family_diversity": 0.0,
+            "ground_cover": 30.0
+          },
+          "max_points": {
+            "legume_in_rotation": 40.0,
+            "family_diversity": 30.0,
+            "ground_cover": 30.0
+          },
+          "legume_in_rotation": false,
+          "distinct_families": 1,
+          "n_crops": 2,
+          "months_with_ground_cover": 12,
+          "method": "legume 40 + 30 x (distinct families - 1) / (crops - 1) + 30 x months with a crop / 12",
+          "note": "Counts practices known to support soil health; it is not a measured soil outcome."
+        },
+        "heat_risk": {
+          "label": "heat-stress exposure (proxy)",
+          "per_crop": [
+            {
+              "crop": "rice",
+              "window_months": 6,
+              "mean_excess_c_current": 0.0,
+              "mean_excess_c_scenario": 0.0,
+              "score_current": 100.0,
+              "score_scenario": 100.0
+            },
+            {
+              "crop": "wheat",
+              "window_months": 7,
+              "mean_excess_c_current": 0.0,
+              "mean_excess_c_scenario": 0.0,
+              "score_current": 100.0,
+              "score_scenario": 100.0
+            }
+          ],
+          "score_current_climate": 100.0,
+          "score_scenario": 100.0,
+          "change": 0.0,
+          "temp_delta_c": 0.0,
+          "method": "per crop: clip(100 - 15 x mean excess °C, 0, 100); rotation: mean over crops weighted by window length",
+          "note": "Compares monthly mean temperature with each crop's ECOCROP optimal maximum (harvest month excluded). It does not model heat at flowering or daily maximum temperatures."
+        }
+      },
+      "total": 60.0,
+      "rank": 3,
+      "water_mm_per_year": 1872.4,
+      "water_m3_per_year": 7864.0,
+      "water_saving_mm": 0.0,
+      "water_saving_pct": 0.0,
+      "water_saving_m3": 0.0,
+      "exceeds_water_budget": null,
+      "water_budget_mm": null,
+      "why": "Your current rotation ranks 3rd of 3 (total 60/100). It needs about 1872 mm of irrigation per year (about 7,864 m3 for your field). Soil-health practices (proxy) score 30: it has no legume, uses crops from the same plant family.",
+      "not_assessed": "Not assessed: crop prices and income, pests and diseases, a field-level soil test and water for rice land preparation and percolation.",
+      "confidence": "medium",
+      "caveats": [
+        "Paddy rice also needs water for land preparation (puddling) and for percolation and seepage, which this ETc estimate does not include, so the rice water need shown is a lower bound."
+      ],
+      "suitability": [
+        {
+          "crop": "rice",
+          "score": 100.0,
+          "limiting_factor": "none",
+          "window_source": "regional pack rotation (provisional)",
+          "ph_advisory": {
+            "status": "outside_optimal",
+            "soil_ph": 7.2,
+            "ecocrop_optimal": [
+              5.5,
+              7.0
+            ],
+            "ecocrop_absolute": [
+              4.5,
+              9.0
+            ],
+            "note": "Soil pH is outside the ECOCROP optimal range but within its absolute range."
+          }
+        },
+        {
+          "crop": "wheat",
+          "score": 90.0,
+          "limiting_factor": "temperature",
+          "window_source": "regional pack rotation (provisional)",
+          "ph_advisory": {
+            "status": "outside_optimal",
+            "soil_ph": 7.2,
+            "ecocrop_optimal": [
+              6.0,
+              7.0
+            ],
+            "ecocrop_absolute": [
+              5.5,
+              8.5
+            ],
+            "note": "Soil pH is outside the ECOCROP optimal range but within its absolute range."
+          }
+        }
+      ],
+      "year_plan": [
+        {
+          "month": 1,
+          "crop": "wheat",
+          "activity": "grow",
+          "kc": 1.07,
+          "etc_mm": 70.5,
+          "rain_mm": 14.8,
+          "irrigation_mm": 58.7,
+          "irrigation_m3": 246.0,
+          "note": null
+        },
+        {
+          "month": 2,
+          "crop": "wheat",
+          "activity": "grow",
+          "kc": 1.15,
+          "etc_mm": 86.4,
+          "rain_mm": 11.8,
+          "irrigation_mm": 77.0,
+          "irrigation_m3": 323.0,
+          "note": null
+        },
+        {
+          "month": 3,
+          "crop": "wheat",
+          "activity": "grow",
+          "kc": 1.15,
+          "etc_mm": 137.3,
+          "rain_mm": 10.7,
+          "irrigation_mm": 128.8,
+          "irrigation_m3": 541.0,
+          "note": null
+        },
+        {
+          "month": 4,
+          "crop": "wheat",
+          "activity": "grow",
+          "kc": 1.1,
+          "etc_mm": 176.9,
+          "rain_mm": 7.7,
+          "irrigation_mm": 170.8,
+          "irrigation_m3": 717.0,
+          "note": null
+        },
+        {
+          "month": 5,
+          "crop": "rice",
+          "activity": "plant",
+          "kc": 0.83,
+          "etc_mm": 175.9,
+          "rain_mm": 1.1,
+          "irrigation_mm": 175.1,
+          "irrigation_m3": 735.0,
+          "note": "Harvest Wheat, then plant Rice (shared transition month)."
+        },
+        {
+          "month": 6,
+          "crop": "rice",
+          "activity": "grow",
+          "kc": 1.11,
+          "etc_mm": 261.3,
+          "rain_mm": 0.7,
+          "irrigation_mm": 260.8,
+          "irrigation_m3": 1095.0,
+          "note": null
+        },
+        {
+          "month": 7,
+          "crop": "rice",
+          "activity": "grow",
+          "kc": 1.19,
+          "etc_mm": 288.8,
+          "rain_mm": 0.3,
+          "irrigation_mm": 288.5,
+          "irrigation_m3": 1212.0,
+          "note": null
+        },
+        {
+          "month": 8,
+          "crop": "rice",
+          "activity": "grow",
+          "kc": 1.2,
+          "etc_mm": 264.7,
+          "rain_mm": 0.0,
+          "irrigation_mm": 264.7,
+          "irrigation_m3": 1112.0,
+          "note": null
+        },
+        {
+          "month": 9,
+          "crop": "rice",
+          "activity": "grow",
+          "kc": 1.19,
+          "etc_mm": 216.0,
+          "rain_mm": 0.6,
+          "irrigation_mm": 215.5,
+          "irrigation_m3": 905.0,
+          "note": null
+        },
+        {
+          "month": 10,
+          "crop": "rice",
+          "activity": "harvest",
+          "kc": 0.94,
+          "etc_mm": 130.1,
+          "rain_mm": 4.7,
+          "irrigation_mm": 126.3,
+          "irrigation_m3": 531.0,
+          "note": null
+        },
+        {
+          "month": 11,
+          "crop": "wheat",
+          "activity": "plant",
+          "kc": 0.7,
+          "etc_mm": 65.6,
+          "rain_mm": 8.7,
+          "irrigation_mm": 58.6,
+          "irrigation_m3": 246.0,
+          "note": null
+        },
+        {
+          "month": 12,
+          "crop": "wheat",
+          "activity": "grow",
+          "kc": 0.82,
+          "etc_mm": 57.1,
+          "rain_mm": 11.8,
+          "irrigation_mm": 47.7,
+          "irrigation_m3": 200.0,
+          "note": null
+        }
+      ]
+    },
+    {
+      "id": "maize_faba_bean",
+      "name": "Maize → Faba bean",
+      "crops": [
+        "maize",
+        "faba_bean"
+      ],
+      "windows": [
+        {
+          "crop": "maize",
+          "label": "Maize",
+          "start_month": 5,
+          "end_month": 9,
+          "months": [
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "window_source": "regional pack rotation (provisional)"
+        },
+        {
+          "crop": "faba_bean",
+          "label": "Faba bean",
+          "start_month": 11,
+          "end_month": 4,
+          "months": [
+            11,
+            12,
+            1,
+            2,
+            3,
+            4
+          ],
+          "window_source": "regional pack rotation (provisional)"
+        }
+      ],
+      "is_current": false,
+      "source": "regional pack",
+      "scores": {
+        "water": 74.0,
+        "soil_practices": 97.5,
+        "heat_risk": 100.0
+      },
+      "score_details": {
+        "water": {
+          "annual_irrigation_mm": 1422.2,
+          "current_rotation_mm": 1872.4,
+          "saving_mm": 450.2,
+          "saving_pct": 24.0,
+          "method": "score = clip(50 + saving %, 0, 100): your current rotation = 50, a 25% saving = 75",
+          "notes": [],
+          "per_crop": [
+            {
+              "crop": "maize",
+              "irrigation_mm": 973.6,
+              "etc_mm": 975.7,
+              "kc_status": "provisional — verify against FAO-56 Table 12"
+            },
+            {
+              "crop": "faba_bean",
+              "irrigation_mm": 448.7,
+              "etc_mm": 501.0,
+              "kc_status": "provisional — verify against FAO-56 Table 12"
+            }
+          ]
+        },
+        "soil_practices": {
+          "label": "soil-health practices (proxy)",
+          "parts": {
+            "legume_in_rotation": 40.0,
+            "family_diversity": 30.0,
+            "ground_cover": 27.5
+          },
+          "max_points": {
+            "legume_in_rotation": 40.0,
+            "family_diversity": 30.0,
+            "ground_cover": 30.0
+          },
+          "legume_in_rotation": true,
+          "distinct_families": 2,
+          "n_crops": 2,
+          "months_with_ground_cover": 11,
+          "method": "legume 40 + 30 x (distinct families - 1) / (crops - 1) + 30 x months with a crop / 12",
+          "note": "Counts practices known to support soil health; it is not a measured soil outcome."
+        },
+        "heat_risk": {
+          "label": "heat-stress exposure (proxy)",
+          "per_crop": [
+            {
+              "crop": "maize",
+              "window_months": 5,
+              "mean_excess_c_current": 0.0,
+              "mean_excess_c_scenario": 0.0,
+              "score_current": 100.0,
+              "score_scenario": 100.0
+            },
+            {
+              "crop": "faba_bean",
+              "window_months": 6,
+              "mean_excess_c_current": 0.0,
+              "mean_excess_c_scenario": 0.0,
+              "score_current": 100.0,
+              "score_scenario": 100.0
+            }
+          ],
+          "score_current_climate": 100.0,
+          "score_scenario": 100.0,
+          "change": 0.0,
+          "temp_delta_c": 0.0,
+          "method": "per crop: clip(100 - 15 x mean excess °C, 0, 100); rotation: mean over crops weighted by window length",
+          "note": "Compares monthly mean temperature with each crop's ECOCROP optimal maximum (harvest month excluded). It does not model heat at flowering or daily maximum temperatures."
+        }
+      },
+      "total": 90.5,
+      "rank": 1,
+      "water_mm_per_year": 1422.2,
+      "water_m3_per_year": 5973.0,
+      "water_saving_mm": 450.2,
+      "water_saving_pct": 24.0,
+      "water_saving_m3": 1891.0,
+      "exceeds_water_budget": null,
+      "water_budget_mm": null,
+      "why": "Ranks 1st of 3 (total 90/100). It needs about 1422 mm of irrigation per year (about 5,973 m3 for your field), 450 mm (24%) less than your current rotation. Soil-health practices (proxy) score 98: it includes a legume, leaves 1 month without a crop.",
+      "not_assessed": "Not assessed: crop prices and income, pests and diseases and a field-level soil test.",
+      "confidence": "medium",
+      "caveats": [],
+      "suitability": [
+        {
+          "crop": "maize",
+          "score": 100.0,
+          "limiting_factor": "none",
+          "window_source": "regional pack rotation (provisional)",
+          "ph_advisory": {
+            "status": "outside_optimal",
+            "soil_ph": 7.2,
+            "ecocrop_optimal": [
+              5.0,
+              7.0
+            ],
+            "ecocrop_absolute": [
+              4.5,
+              8.5
+            ],
+            "note": "Soil pH is outside the ECOCROP optimal range but within its absolute range."
+          }
+        },
+        {
+          "crop": "faba_bean",
+          "score": 83.9,
+          "limiting_factor": "temperature",
+          "window_source": "regional pack rotation (provisional)",
+          "ph_advisory": {
+            "status": "outside_optimal",
+            "soil_ph": 7.2,
+            "ecocrop_optimal": [
+              6.0,
+              7.0
+            ],
+            "ecocrop_absolute": [
+              4.5,
+              8.6
+            ],
+            "note": "Soil pH is outside the ECOCROP optimal range but within its absolute range."
+          }
+        }
+      ],
+      "year_plan": [
+        {
+          "month": 1,
+          "crop": "faba_bean",
+          "activity": "grow",
+          "kc": 1.12,
+          "etc_mm": 73.7,
+          "rain_mm": 14.8,
+          "irrigation_mm": 61.8,
+          "irrigation_m3": 260.0,
+          "note": null
+        },
+        {
+          "month": 2,
+          "crop": "faba_bean",
+          "activity": "grow",
+          "kc": 1.15,
+          "etc_mm": 86.4,
+          "rain_mm": 11.8,
+          "irrigation_mm": 77.0,
+          "irrigation_m3": 323.0,
+          "note": null
+        },
+        {
+          "month": 3,
+          "crop": "faba_bean",
+          "activity": "grow",
+          "kc": 1.14,
+          "etc_mm": 135.7,
+          "rain_mm": 10.7,
+          "irrigation_mm": 127.1,
+          "irrigation_m3": 534.0,
+          "note": null
+        },
+        {
+          "month": 4,
+          "crop": "faba_bean",
+          "activity": "harvest",
+          "kc": 0.65,
+          "etc_mm": 105.1,
+          "rain_mm": 7.7,
+          "irrigation_mm": 98.9,
+          "irrigation_m3": 415.0,
+          "note": null
+        },
+        {
+          "month": 5,
+          "crop": "maize",
+          "activity": "plant",
+          "kc": 0.32,
+          "etc_mm": 68.6,
+          "rain_mm": 1.1,
+          "irrigation_mm": 67.7,
+          "irrigation_m3": 284.0,
+          "note": null
+        },
+        {
+          "month": 6,
+          "crop": "maize",
+          "activity": "grow",
+          "kc": 0.84,
+          "etc_mm": 197.8,
+          "rain_mm": 0.7,
+          "irrigation_mm": 197.2,
+          "irrigation_m3": 828.0,
+          "note": null
+        },
+        {
+          "month": 7,
+          "crop": "maize",
+          "activity": "grow",
+          "kc": 1.2,
+          "etc_mm": 290.7,
+          "rain_mm": 0.3,
+          "irrigation_mm": 290.5,
+          "irrigation_m3": 1220.0,
+          "note": null
+        },
+        {
+          "month": 8,
+          "crop": "maize",
+          "activity": "grow",
+          "kc": 1.2,
+          "etc_mm": 264.7,
+          "rain_mm": 0.0,
+          "irrigation_mm": 264.7,
+          "irrigation_m3": 1112.0,
+          "note": null
+        },
+        {
+          "month": 9,
+          "crop": "maize",
+          "activity": "harvest",
+          "kc": 0.85,
+          "etc_mm": 153.9,
+          "rain_mm": 0.6,
+          "irrigation_mm": 153.4,
+          "irrigation_m3": 644.0,
+          "note": null
+        },
+        {
+          "month": 10,
+          "crop": null,
+          "activity": "fallow",
+          "kc": null,
+          "etc_mm": 0.0,
+          "rain_mm": 4.7,
+          "irrigation_mm": 0.0,
+          "irrigation_m3": 0.0,
+          "note": null
+        },
+        {
+          "month": 11,
+          "crop": "faba_bean",
+          "activity": "plant",
+          "kc": 0.5,
+          "etc_mm": 47.0,
+          "rain_mm": 8.7,
+          "irrigation_mm": 40.1,
+          "irrigation_m3": 168.0,
+          "note": null
+        },
+        {
+          "month": 12,
+          "crop": "faba_bean",
+          "activity": "grow",
+          "kc": 0.76,
+          "etc_mm": 53.2,
+          "rain_mm": 11.8,
+          "irrigation_mm": 43.8,
+          "irrigation_m3": 184.0,
+          "note": null
+        }
+      ]
+    },
+    {
+      "id": "maize_berseem",
+      "name": "Maize → Berseem",
+      "crops": [
+        "maize",
+        "berseem"
+      ],
+      "windows": [
+        {
+          "crop": "maize",
+          "label": "Maize",
+          "start_month": 5,
+          "end_month": 9,
+          "months": [
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "window_source": "regional pack rotation (provisional)"
+        },
+        {
+          "crop": "berseem",
+          "label": "Berseem",
+          "start_month": 10,
+          "end_month": 5,
+          "months": [
+            10,
+            11,
+            12,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "window_source": "regional pack rotation (provisional)"
+        }
+      ],
+      "is_current": false,
+      "source": "regional pack",
+      "scores": {
+        "water": 69.7,
+        "soil_practices": 100.0,
+        "heat_risk": 100.0
+      },
+      "score_details": {
+        "water": {
+          "annual_irrigation_mm": 1504.3,
+          "current_rotation_mm": 1872.4,
+          "saving_mm": 368.1,
+          "saving_pct": 19.7,
+          "method": "score = clip(50 + saving %, 0, 100): your current rotation = 50, a 25% saving = 75",
+          "notes": [],
+          "per_crop": [
+            {
+              "crop": "maize",
+              "irrigation_mm": 939.7,
+              "etc_mm": 941.4,
+              "kc_status": "provisional — verify against FAO-56 Table 12"
+            },
+            {
+              "crop": "berseem",
+              "irrigation_mm": 564.6,
+              "etc_mm": 621.2,
+              "kc_status": "provisional — verify against FAO-56 Table 12"
+            }
+          ]
+        },
+        "soil_practices": {
+          "label": "soil-health practices (proxy)",
+          "parts": {
+            "legume_in_rotation": 40.0,
+            "family_diversity": 30.0,
+            "ground_cover": 30.0
+          },
+          "max_points": {
+            "legume_in_rotation": 40.0,
+            "family_diversity": 30.0,
+            "ground_cover": 30.0
+          },
+          "legume_in_rotation": true,
+          "distinct_families": 2,
+          "n_crops": 2,
+          "months_with_ground_cover": 12,
+          "method": "legume 40 + 30 x (distinct families - 1) / (crops - 1) + 30 x months with a crop / 12",
+          "note": "Counts practices known to support soil health; it is not a measured soil outcome."
+        },
+        "heat_risk": {
+          "label": "heat-stress exposure (proxy)",
+          "per_crop": [
+            {
+              "crop": "maize",
+              "window_months": 5,
+              "mean_excess_c_current": 0.0,
+              "mean_excess_c_scenario": 0.0,
+              "score_current": 100.0,
+              "score_scenario": 100.0
+            },
+            {
+              "crop": "berseem",
+              "window_months": 8,
+              "mean_excess_c_current": 0.0,
+              "mean_excess_c_scenario": 0.0,
+              "score_current": 100.0,
+              "score_scenario": 100.0
+            }
+          ],
+          "score_current_climate": 100.0,
+          "score_scenario": 100.0,
+          "change": 0.0,
+          "temp_delta_c": 0.0,
+          "method": "per crop: clip(100 - 15 x mean excess °C, 0, 100); rotation: mean over crops weighted by window length",
+          "note": "Compares monthly mean temperature with each crop's ECOCROP optimal maximum (harvest month excluded). It does not model heat at flowering or daily maximum temperatures."
+        }
+      },
+      "total": 89.9,
+      "rank": 2,
+      "water_mm_per_year": 1504.3,
+      "water_m3_per_year": 6318.0,
+      "water_saving_mm": 368.1,
+      "water_saving_pct": 19.7,
+      "water_saving_m3": 1546.0,
+      "exceeds_water_budget": null,
+      "water_budget_mm": null,
+      "why": "Ranks 2nd of 3 (total 90/100). It needs about 1504 mm of irrigation per year (about 6,318 m3 for your field), 368 mm (20%) less than your current rotation. Soil-health practices (proxy) score 100: it includes a legume.",
+      "not_assessed": "Not assessed: crop prices and income, pests and diseases and a field-level soil test.",
+      "confidence": "medium",
+      "caveats": [],
+      "suitability": [
+        {
+          "crop": "maize",
+          "score": 100.0,
+          "limiting_factor": "none",
+          "window_source": "regional pack rotation (provisional)",
+          "ph_advisory": {
+            "status": "outside_optimal",
+            "soil_ph": 7.2,
+            "ecocrop_optimal": [
+              5.0,
+              7.0
+            ],
+            "ecocrop_absolute": [
+              4.5,
+              8.5
+            ],
+            "note": "Soil pH is outside the ECOCROP optimal range but within its absolute range."
+          }
+        },
+        {
+          "crop": "berseem",
+          "score": 94.9,
+          "limiting_factor": "temperature",
+          "window_source": "regional pack rotation (provisional)",
+          "ph_advisory": {
+            "status": "outside_optimal",
+            "soil_ph": 7.2,
+            "ecocrop_optimal": [
+              6.5,
+              7.0
+            ],
+            "ecocrop_absolute": [
+              4.9,
+              7.5
+            ],
+            "note": "Soil pH is outside the ECOCROP optimal range but within its absolute range."
+          }
+        }
+      ],
+      "year_plan": [
+        {
+          "month": 1,
+          "crop": "berseem",
+          "activity": "grow",
+          "kc": 0.9,
+          "etc_mm": 59.1,
+          "rain_mm": 14.8,
+          "irrigation_mm": 47.3,
+          "irrigation_m3": 199.0,
+          "note": null
+        },
+        {
+          "month": 2,
+          "crop": "berseem",
+          "activity": "grow",
+          "kc": 0.9,
+          "etc_mm": 67.6,
+          "rain_mm": 11.8,
+          "irrigation_mm": 58.2,
+          "irrigation_m3": 244.0,
+          "note": null
+        },
+        {
+          "month": 3,
+          "crop": "berseem",
+          "activity": "grow",
+          "kc": 0.9,
+          "etc_mm": 107.5,
+          "rain_mm": 10.7,
+          "irrigation_mm": 98.9,
+          "irrigation_m3": 415.0,
+          "note": null
+        },
+        {
+          "month": 4,
+          "crop": "berseem",
+          "activity": "grow",
+          "kc": 0.89,
+          "etc_mm": 143.7,
+          "rain_mm": 7.7,
+          "irrigation_mm": 137.5,
+          "irrigation_m3": 578.0,
+          "note": null
+        },
+        {
+          "month": 5,
+          "crop": "maize",
+          "activity": "plant",
+          "kc": 0.59,
+          "etc_mm": 126.4,
+          "rain_mm": 1.1,
+          "irrigation_mm": 125.5,
+          "irrigation_m3": 527.0,
+          "note": "Harvest Berseem, then plant Maize (shared transition month)."
+        },
+        {
+          "month": 6,
+          "crop": "maize",
+          "activity": "grow",
+          "kc": 0.84,
+          "etc_mm": 197.8,
+          "rain_mm": 0.7,
+          "irrigation_mm": 197.2,
+          "irrigation_m3": 828.0,
+          "note": null
+        },
+        {
+          "month": 7,
+          "crop": "maize",
+          "activity": "grow",
+          "kc": 1.2,
+          "etc_mm": 290.7,
+          "rain_mm": 0.3,
+          "irrigation_mm": 290.5,
+          "irrigation_m3": 1220.0,
+          "note": null
+        },
+        {
+          "month": 8,
+          "crop": "maize",
+          "activity": "grow",
+          "kc": 1.2,
+          "etc_mm": 264.7,
+          "rain_mm": 0.0,
+          "irrigation_mm": 264.7,
+          "irrigation_m3": 1112.0,
+          "note": null
+        },
+        {
+          "month": 9,
+          "crop": "maize",
+          "activity": "harvest",
+          "kc": 0.85,
+          "etc_mm": 153.9,
+          "rain_mm": 0.6,
+          "irrigation_mm": 153.4,
+          "irrigation_m3": 644.0,
+          "note": null
+        },
+        {
+          "month": 10,
+          "crop": "berseem",
+          "activity": "plant",
+          "kc": 0.4,
+          "etc_mm": 55.5,
+          "rain_mm": 4.7,
+          "irrigation_mm": 51.8,
+          "irrigation_m3": 217.0,
+          "note": null
+        },
+        {
+          "month": 11,
+          "crop": "berseem",
+          "activity": "grow",
+          "kc": 0.48,
+          "etc_mm": 45.0,
+          "rain_mm": 8.7,
+          "irrigation_mm": 38.0,
+          "irrigation_m3": 160.0,
+          "note": null
+        },
+        {
+          "month": 12,
+          "crop": "berseem",
+          "activity": "grow",
+          "kc": 0.72,
+          "etc_mm": 50.8,
+          "rain_mm": 11.8,
+          "irrigation_mm": 41.3,
+          "irrigation_m3": 174.0,
+          "note": null
+        }
+      ]
+    }
+  ],
+  "all_ranked": [
+    {
+      "id": "maize_faba_bean",
+      "name": "Maize → Faba bean",
+      "is_current": false,
+      "water_mm_per_year": 1422.2,
+      "water_saving_pct": 24.0,
+      "scores": {
+        "water": 74.0,
+        "soil_practices": 97.5,
+        "heat_risk": 100.0
+      },
+      "total": 90.5,
+      "rank": 1
+    },
+    {
+      "id": "maize_berseem",
+      "name": "Maize → Berseem",
+      "is_current": false,
+      "water_mm_per_year": 1504.3,
+      "water_saving_pct": 19.7,
+      "scores": {
+        "water": 69.7,
+        "soil_practices": 100.0,
+        "heat_risk": 100.0
+      },
+      "total": 89.9,
+      "rank": 2
+    },
+    {
+      "id": "soybean_wheat",
+      "name": "Soybean → Wheat",
+      "is_current": false,
+      "water_mm_per_year": 1549.7,
+      "water_saving_pct": 17.2,
+      "scores": {
+        "water": 67.2,
+        "soil_practices": 97.5,
+        "heat_risk": 100.0
+      },
+      "total": 88.2,
+      "rank": 3
+    },
+    {
+      "id": "cotton_short_berseem",
+      "name": "Cotton → Short berseem",
+      "is_current": false,
+      "water_mm_per_year": 1606.1,
+      "water_saving_pct": 14.2,
+      "scores": {
+        "water": 64.2,
+        "soil_practices": 100.0,
+        "heat_risk": 100.0
+      },
+      "total": 88.1,
+      "rank": 4
+    },
+    {
+      "id": "rice_berseem",
+      "name": "Rice → Berseem",
+      "is_current": false,
+      "water_mm_per_year": 1753.7,
+      "water_saving_pct": 6.3,
+      "scores": {
+        "water": 56.3,
+        "soil_practices": 100.0,
+        "heat_risk": 100.0
+      },
+      "total": 85.4,
+      "rank": 5
+    },
+    {
+      "id": "rice_faba_bean",
+      "name": "Rice → Faba bean",
+      "is_current": false,
+      "water_mm_per_year": 1827.1,
+      "water_saving_pct": 2.4,
+      "scores": {
+        "water": 52.4,
+        "soil_practices": 100.0,
+        "heat_risk": 100.0
+      },
+      "total": 84.1,
+      "rank": 6
+    },
+    {
+      "id": "maize_wheat",
+      "name": "Maize → Wheat",
+      "is_current": false,
+      "water_mm_per_year": 1545.0,
+      "water_saving_pct": 17.5,
+      "scores": {
+        "water": 67.5,
+        "soil_practices": 27.5,
+        "heat_risk": 100.0
+      },
+      "total": 65.0,
+      "rank": 7
+    },
+    {
+      "id": "rice_wheat",
+      "name": "Rice → Wheat",
+      "is_current": true,
+      "water_mm_per_year": 1872.4,
+      "water_saving_pct": 0.0,
+      "scores": {
+        "water": 50.0,
+        "soil_practices": 30.0,
+        "heat_risk": 100.0
+      },
+      "total": 60.0,
+      "rank": 8
+    }
+  ],
+  "current_is_strong": false,
+  "sensitivity": {
+    "cases": [
+      {
+        "name": "your_priorities",
+        "weights": {
+          "water": 0.333,
+          "soil": 0.333,
+          "heat_risk": 0.333
+        },
+        "ranking": [
+          "maize_faba_bean",
+          "maize_berseem",
+          "current"
+        ]
+      },
+      {
+        "name": "equal",
+        "weights": {
+          "water": 0.333,
+          "soil": 0.333,
+          "heat_risk": 0.333
+        },
+        "ranking": [
+          "maize_faba_bean",
+          "maize_berseem",
+          "current"
+        ]
+      },
+      {
+        "name": "water_only",
+        "weights": {
+          "water": 1.0,
+          "soil": 0.0,
+          "heat_risk": 0.0
+        },
+        "ranking": [
+          "maize_faba_bean",
+          "maize_berseem",
+          "current"
+        ]
+      },
+      {
+        "name": "soil_only",
+        "weights": {
+          "water": 0.0,
+          "soil": 1.0,
+          "heat_risk": 0.0
+        },
+        "ranking": [
+          "maize_berseem",
+          "maize_faba_bean",
+          "current"
+        ]
+      },
+      {
+        "name": "heat_only",
+        "weights": {
+          "water": 0.0,
+          "soil": 0.0,
+          "heat_risk": 1.0
+        },
+        "ranking": [
+          "maize_faba_bean",
+          "maize_berseem",
+          "current"
+        ]
+      }
+    ],
+    "winner_is_robust": false,
+    "note": "The top rotation changes with the weighting: your_priorities: maize_faba_bean; equal: maize_faba_bean; water_only: maize_faba_bean; soil_only: maize_berseem; heat_only: maize_faba_bean."
+  },
+  "warnings": [
+    "Mean annual rain 2016–2025 (120 mm) is more than double the 1991–2005 mean (52 mm). This may reflect a change in the NASA POWER precipitation source rather than real rainfall, and must not be read as a climate trend."
+  ],
+  "assumptions": [
+    "Kc follows the FAO-56 four-stage curve (initial, development, mid-season, late season) with stage lengths as fractions of the growing window (default 0.15 / 0.25 / 0.40 / 0.20, provisional until replaced with FAO-56 Table 11 lengths); monthly Kc is the curve's mean over the month.",
+    "ETc = ET0 x Kc per month, with ET0 from FAO-56 Penman-Monteith on the NASA POWER monthly climatology.",
+    "Effective rain = 0.8 x monthly rain (a fixed fraction, not a soil water balance).",
+    "Irrigation need = max(ETc - effective rain, 0) per month; no soil water storage, leaching or conveyance losses.",
+    "A month shared by two crops (harvest of one, sowing of the next) counts at half weight for each.",
+    "Water score = clip(50 + % irrigation saved versus your current rotation, 0, 100): your current rotation scores 50 and a 25% saving scores 75.",
+    "Heat-stress exposure (proxy): Compares monthly mean temperature with each crop's ECOCROP optimal maximum (harvest month excluded). It does not model heat at flowering or daily maximum temperatures.",
+    "Soil-health practices (proxy) = legume in rotation (40) + plant-family diversity (30) + months with ground cover (30); it counts practices and is not a measured soil outcome.",
+    "Kc values and regional calendars are provisional until verified against FAO-56 Table 12 and local sources."
+  ],
+  "run_info": {
+    "generated_at": "2026-11-14T23:22:48.411421+00:00",
+    "note": "REAL engine output (not sample data) for the demo point near Tanta (30.85, 31.05), run on 2026-11-14 from cached NASA POWER 1991–2025, SoilGrids and MODIS MOD13Q1 NDVI 2023–2025 data, saved as a frontend mock. Request: current rice → wheat, full irrigation, equal priorities, 1 feddan. Kc values and regional calendars are provisional."
+  }
+}
