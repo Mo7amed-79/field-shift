@@ -40,7 +40,7 @@ This file is our disclosure of software intelligence (SI) / AI use, as required 
 | `data/sources.json` | TODO: team to confirm | Entries drafted by AI; licenses and access dates are verified by hand. |
 | `data/raw/` | Not AI-generated | Unmodified ECOCROP CSV and lookup from OpenCLIM/ecocrop; unmodified NASS CDL legend `cdl_codes_names.xlsx`. |
 | `data/cache/` | Not AI-generated | Raw NASA POWER, ISRIC SoilGrids and MODIS NDVI API responses, git-ignored. |
-| `docs/` | AI-generated | `API_CHANGES.md`, `OVERNIGHT_LOG.md`, `OVERNIGHT_REPORT.md`. |
+| `docs/` | AI-generated | `API_CHANGES.md`, `OVERNIGHT_LOG.md`, `OVERNIGHT_REPORT.md`, `DOCUMENTATION.md`, `SUBMISSION.md` (written from the code, data files and real API output; to be reviewed by the team). |
 | Root files (`README.md`, `AI_USAGE.md`, `.gitignore`) | AI-generated | `LICENSE` is the standard Apache 2.0 text. |
 
 Keep this table up to date as files change.

@@ -2,7 +2,26 @@
 
 NASA Space Apps 2026 project.
 
-Field Shift is a decision-support web tool for farmers: a **global engine, with the Nile Delta as our demo case**. The farmer clicks their field on a map, enters their current crop rotation, water access and priorities (water, soil-health practices, heat-stress exposure), and optionally a field area and a climate scenario. Field Shift **compares the farmer's rotation with known alternatives**; it does not invent rotations. Where a regional pack exists (Nile Delta, Punjab), the alternatives are that region's typical rotations; elsewhere the tool runs in a clearly labelled, low-confidence *exploratory mode*. Each rotation is scored on irrigation need (FAO-56 crop water use from NASA POWER climate), soil-health practices (a proxy) and heat-stress exposure (a proxy) under the scenario, with the numbers behind every score, a month-by-month plan and a plain-language explanation of what is and is not assessed.
+Field Shift is a decision-support web tool for farmers: a **global engine, with the Nile Delta as our demo case**. The farmer clicks their field on a map, enters their current crop rotation, water access and priorities (water, soil-health practices, heat-stress exposure), and optionally a field area and a climate scenario. Field Shift **compares the farmer's rotation with known alternatives**; it does not invent rotations. Where a regional pack exists (Nile Delta, Punjab, Iowa, Kansas), the alternatives are that region's typical rotations; elsewhere the tool runs in a clearly labelled, low-confidence *exploratory mode*. Each rotation is scored on irrigation need (FAO-56 crop water use from NASA POWER climate), soil-health practices (a proxy) and heat-stress exposure (a proxy) under the scenario, with the numbers behind every score, a month-by-month plan and a plain-language explanation of what is and is not assessed.
+
+## Quick start
+
+```bash
+python -m venv .venv
+source .venv/bin/activate              # Windows: .venv\Scripts\activate
+pip install -r backend/requirements.txt
+python scripts/precache_demo.py        # cache NASA POWER, SoilGrids, NDVI and (US) CDL for the demo points
+uvicorn backend.main:app --reload      # API at http://127.0.0.1:8000, interactive docs at /docs
+pytest                                 # 203 offline tests
+```
+
+A first precache from an empty cache can take a long time (the MODIS NDVI service often needs 40–60 s per request); points already cached are skipped.
+
+## Documentation
+
+- [docs/DOCUMENTATION.md](docs/DOCUMENTATION.md): technical documentation: pipeline, data sources, methods and formulas, regional packs, API reference with real examples, farmer chat, validation, known limitations.
+- [docs/SUBMISSION.md](docs/SUBMISSION.md): text for the Space Apps project page.
+- [docs/API_CHANGES.md](docs/API_CHANGES.md): contract changes for the frontend.
 
 ## Architecture
 
@@ -61,7 +80,7 @@ The API is then at http://127.0.0.1:8000 (interactive docs at `/docs`). Endpoint
 - `GET /api/health`
 - `GET /api/crops`
 - `GET /api/sources`
-- `GET /api/location?lat=&lon=` (real SoilGrids soil; `seasons_detected` empty until NDVI is added)
+- `GET /api/location?lat=&lon=` (real SoilGrids soil; `seasons_detected` from cached MODIS NDVI, empty if not cached)
 - `GET /api/climate?lat=&lon=` (real NASA POWER, 1991–2025)
 - `GET /api/field-history?lat=&lon=` (contiguous US only: yearly USDA Cropland Data Layer crops and the detected rotation)
 - `GET /api/ndvi?lat=&lon=` (MODIS MOD13Q1 NDVI from ORNL DAAC; returns `loading` and fetches in the background if not cached — a fetch takes several minutes)
